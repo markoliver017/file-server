@@ -172,7 +172,7 @@ CREATE TABLE blood_types (
     id INT AUTO_INCREMENT PRIMARY KEY,
     blood_type VARCHAR(3) NOT NULL,
     rh_factor ENUM('+', '-') NOT NULL,
-    UNIQUE KEY (blood_type, rh_factor)
+    UNIQUE KEY (type, rh_factor)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 

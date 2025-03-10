@@ -1,33 +1,103 @@
-const pool = require("@config/database");
-const { User, BloodType, Role } = require("../models/index");
+const { User, BloodType, Role } = require("@models/index");
 
 module.exports = {
+  // Index route
   index: async (req, res) => {
-    res.json({ message: "Welcome to Sports Controller" });
+    res.json({ message: "Welcome to Users Controller" });
   },
-  search: async (req, res) => {
-    const [rows] = await pool.query("SELECT * FROM users");
-    res.json(rows);
+
+  // Create a new user
+  store: async (req, res) => {
+    try {
+      const data = req.body;
+      const newUser = await User.create(data);
+      res.status(201).json(newUser);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
   },
+
+  // Get all users
   getAllUsers: async (req, res) => {
     try {
       const users = await User.findAll({
-        attributes: ["first_name", "last_name"],
+        attributes: ["id", "first_name", "last_name", "email", "full_name"],
         include: [
           {
-            attributes: ["blood_type"],
+            attributes: ["id", "blood_type"],
             model: BloodType,
             required: false,
-            include: [{ model: User, required: false }],
           },
           {
-            attributes: ["role_name"],
+            attributes: ["id", "role_name"],
             model: Role,
             required: false,
           },
         ],
       });
       res.status(200).json(users);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  // Get a single user by ID
+  getUserById: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const user = await User.findByPk(id, {
+        attributes: ["id", "first_name", "last_name", "email"],
+        include: [
+          {
+            attributes: ["id", "blood_type"],
+            model: BloodType,
+            required: false,
+          },
+          {
+            attributes: ["id", "role_name"],
+            model: Role,
+            required: false,
+          },
+        ],
+      });
+      if (user) {
+        res.status(200).json(user);
+      } else {
+        res.status(404).json({ error: "User not found" });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  // Update a user by ID
+  updateUser: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const data = req.body;
+      const user = await User.findByPk(id);
+      if (user) {
+        await user.update(data);
+        res.status(200).json(user);
+      } else {
+        res.status(404).json({ error: "User not found" });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  // Delete a user by ID
+  deleteUser: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const user = await User.findByPk(id);
+      if (user) {
+        await user.destroy();
+        res.status(200).json({ message: "User deleted successfully" });
+      } else {
+        res.status(404).json({ error: "User not found" });
+      }
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

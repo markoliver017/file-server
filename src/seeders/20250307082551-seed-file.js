@@ -1,7 +1,6 @@
 "use strict";
 
-const { faker } = require("@faker-js/faker");
-const bcrypt = require("bcrypt");
+const { faker, fa } = require("@faker-js/faker");
 const relationships = [
   "mother",
   "father",
@@ -23,26 +22,17 @@ module.exports = {
           first_name: faker.person.firstName(),
           last_name: faker.person.lastName(),
           middle_name: faker.person.middleName(),
-          photo_id: null,
+          photo_id: faker.image.urlPicsumPhotos(),
           date_of_birth: faker.date.birthdate(),
-          gender: faker.helpers.arrayElement(["male", "female"]),
-          civil_status: faker.helpers.arrayElement([
-            "single",
-            "married",
-            "widowed",
-            "separated",
-          ]),
+          gender: faker.person.gender(),
+          civil_status: "single",
           weight: faker.number.int({ min: 50, max: 100 }),
           health_condition: faker.word.adjective(),
-          is_eligible: faker.helpers.arrayElement([
-            "eligible",
-            "not-eligible",
-            "for verification",
-          ]),
-          is_active: faker.helpers.arrayElement([0, 1]),
+          is_eligible: "for verification",
+          is_active: 1,
           contact_number: faker.phone.number(),
           email: faker.internet.email(),
-          password: bcrypt.hashSync("password1234", 10),
+          password: faker.internet.password(),
           nationality: faker.location.country(),
           occupation: faker.person.jobTitle(),
           mailing_address: faker.location.streetAddress(),

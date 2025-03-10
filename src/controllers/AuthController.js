@@ -1,12 +1,11 @@
-// controllers/AuthController.js
 const { User } = require("../models");
 
 module.exports = {
   login: async (req, res) => {
     try {
-      const { username, password } = req.body;
+      const { email, password } = req.body;
 
-      const user = await User.findOne({ where: { username } });
+      const user = await User.findOne({ where: { email } });
 
       if (!user) {
         return res.status(401).send("Invalid username or password");

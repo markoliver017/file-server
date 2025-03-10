@@ -4,6 +4,8 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const dotenv = require("dotenv");
+const session = require("express-session");
+const passport = require("@config/passport");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const routes = require("@config/routes");
@@ -15,9 +17,27 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
-// app.use(helmet());
-// app.use(morgan("combined"));
+app.use(express.urlencoded({ extended: true }));
+app.use(helmet());
+app.use(morgan("combined"));
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
+
+app.use(
+  session({
+    secret: "your_secret_key",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use((req, res, next) => {
+  console.log("Session:", req.session);
+  console.log("User:", req.user);
+  next();
+});
 app.use("/api", routes);
 
 app.use((err, req, res, next) => {
