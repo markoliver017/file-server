@@ -19,17 +19,76 @@ const User = sequelize.define(
   {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     blood_type_id: { type: DataTypes.INTEGER, allowNull: true },
-    role_id: { type: DataTypes.INTEGER, allowNull: true },
-    first_name: { type: DataTypes.STRING(50), allowNull: false },
-    last_name: { type: DataTypes.STRING(50), allowNull: false },
+    role_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: Role,
+        key: "id",
+      },
+      validate: {
+        async isValidRole(value) {
+          const role = await Role.findByPk(value);
+          if (!role) {
+            throw new Error("Role field is required.");
+          }
+        },
+      },
+    },
+    first_name: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "First Name field is required.",
+        },
+      },
+      set(value) {
+        const formatted =
+          value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+        this.setDataValue("first_name", formatted);
+      },
+    },
+    last_name: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "Last Name field is required.",
+        },
+      },
+    },
     middle_name: { type: DataTypes.STRING(50), allowNull: true },
     prefix: { type: DataTypes.STRING(50), allowNull: true },
     suffix: { type: DataTypes.STRING(50), allowNull: true },
     photo_id: { type: DataTypes.INTEGER, allowNull: true },
-    date_of_birth: { type: DataTypes.DATEONLY, allowNull: false },
-    gender: { type: DataTypes.ENUM("male", "female"), allowNull: false },
+    date_of_birth: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+      validate: {
+        isDate: true,
+      },
+    },
+    gender: {
+      type: DataTypes.ENUM("male", "female"),
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "Gender field is required.",
+        },
+      },
+    },
     is_active: { type: DataTypes.TINYINT, allowNull: false, defaultValue: 1 },
-    email: { type: DataTypes.STRING(250), allowNull: false, unique: true },
+    email: {
+      type: DataTypes.STRING(250),
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: {
+          msg: "Email field must be a valid email.",
+        },
+      },
+    },
     password: {
       type: DataTypes.TEXT,
       allowNull: false,
@@ -40,21 +99,39 @@ const User = sequelize.define(
       get() {
         return this.getDataValue("password");
       },
+      validate: {
+        notEmpty: {
+          msg: "Password field is required.",
+        },
+      },
+    },
+    contact_number: {
+      type: DataTypes.STRING(15),
+      allowNull: true,
+      validate: {
+        len: {
+          args: [11, 13],
+          msg: "Contact number must be 11-13 characters long.",
+        },
+        is: {
+          args: /^[\d+]+$/,
+          msg: "Invalid contact number format",
+        },
+      },
     },
     civil_status: {
       type: DataTypes.ENUM("single", "married", "widowed", "separated"),
       allowNull: false,
       defaultValue: "single",
     },
-    weight: { type: DataTypes.DECIMAL(5, 2), allowNull: false },
+    weight: { type: DataTypes.DECIMAL(5, 2), allowNull: true },
     health_condition: { type: DataTypes.TEXT, allowNull: true },
     is_eligible: {
       type: DataTypes.ENUM("eligible", "not-eligible", "for verification"),
       allowNull: false,
       defaultValue: "for verification",
     },
-    contact_number: { type: DataTypes.STRING(20), allowNull: true },
-    nationality: { type: DataTypes.STRING(50), allowNull: false },
+    nationality: { type: DataTypes.STRING(50), allowNull: true },
     occupation: { type: DataTypes.STRING(100), allowNull: true },
     mailing_address: { type: DataTypes.TEXT, allowNull: true },
     home_address: { type: DataTypes.TEXT, allowNull: true },

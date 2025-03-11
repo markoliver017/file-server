@@ -1,17 +1,28 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("@controllers/UsersController");
+const roleController = require("@controllers/RolesController");
 const bloodTypeController = require("@controllers/BloodTypesController");
 const authJWTTokenMiddleware = require("@middlewares/authJWTTokenMiddleware");
 const jwt = require("jsonwebtoken");
 const passport = require("@config/passport");
+const upload = require("@/utils/upload");
 
+/** Users routes **/
 router.get("/", userController.index);
-router.get("/users", authJWTTokenMiddleware, userController.getAllUsers);
-router.post("/users", userController.store);
+router.get("/users", userController.getAllUsers);
+router.post("/users", upload.single("file"), userController.store);
 router.get("/users/:id", userController.getUserById);
 router.put("/users/:id", userController.updateUser);
 router.delete("/users/:id", userController.deleteUser);
+
+/** Roles routes**/
+router.get("/", roleController.index);
+router.get("/roles", roleController.getAllRoles);
+router.post("/roles", roleController.store);
+router.get("/roles/:id", roleController.getRoleById);
+router.put("/roles/:id", roleController.updateRole);
+router.delete("/roles/:id", roleController.deleteRole);
 
 router.get("/bloodtypes", bloodTypeController.index);
 
