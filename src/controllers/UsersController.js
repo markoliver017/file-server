@@ -1,5 +1,6 @@
+const fs = require("fs");
 const upload = require("@/utils/upload");
-const { User, BloodType, Role } = require("@models/index");
+const { User, BloodType, Role, File } = require("@models/index");
 
 module.exports = {
   // Index route
@@ -9,25 +10,67 @@ module.exports = {
 
   // Create a new user
   store: async (req, res) => {
-    try {
-      const data = req.body;
-      console.log("usercontroller>>>>>>>>>>>>", data);
-      const newUser = await User.create(data);
-      if (req.file) {
-        upload.single(file);
+    upload.single("file")(req, res, async (err) => {
+      if (err) {
+        return res.status(400).json({ error: err.message });
       }
-      res.status(201).json(newUser);
-    } catch (error) {
-      if (error.name === "SequelizeValidationError") {
-        const errors = error.errors.reduce((acc, err) => {
-          acc[err.path] = err.message;
-          return acc;
-        }, {});
-        res.status(400).json({ validation_errors: errors });
-      } else {
-        res.status(500).json({ error: error.message });
+
+
+      try {
+        const data = req.body;
+        const newUser = await User.create(data);
+
+        const fileUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        if (fileUrl) {
+          const newFile = await File.create({
+            url: fileUrl,
+            table_name: "users",
+            user_id: newUser.id,
+            type: "project",
+          });
+
+          await newUser.update({ photo_id: newFile.id })
+        }
+        const newUserData = await User.findByPk(newUser.id, {
+          attributes: ["id", "first_name", "last_name", "email"],
+          include: [
+            {
+              attributes: ["id", "blood_type"],
+              model: BloodType,
+              required: false,
+            },
+            {
+              attributes: ["id", "role_name"],
+              model: Role,
+              required: false,
+            },
+            {
+              attributes: ["id", "url", "type"],
+              model: File,
+              required: false,
+            },
+          ],
+        });
+        res.status(201).json(newUserData);
+      } catch (error) {
+
+        if (req.file) {
+          fs.unlink(`./public/uploads/${req.file.filename}`, (err) => {
+            if (err) console.error("Error deleting file:", err);
+          });
+        }
+
+        if (error.name === "SequelizeValidationError" || error.name === "SequelizeUniqueConstraintError") {
+          const errors = error.errors.reduce((acc, err) => {
+            acc[err.path] = err.message;
+            return acc;
+          }, {});
+          res.status(400).json({ errors });
+        } else {
+          res.status(500).json({ errors: error.message });
+        }
       }
-    }
+    })
   },
 
   // Get all users
@@ -69,6 +112,11 @@ module.exports = {
           {
             attributes: ["id", "role_name"],
             model: Role,
+            required: false,
+          },
+          {
+            attributes: ["id", "url", "type"],
+            model: File,
             required: false,
           },
         ],

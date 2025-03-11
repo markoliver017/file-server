@@ -6,12 +6,11 @@ const bloodTypeController = require("@controllers/BloodTypesController");
 const authJWTTokenMiddleware = require("@middlewares/authJWTTokenMiddleware");
 const jwt = require("jsonwebtoken");
 const passport = require("@config/passport");
-const upload = require("@/utils/upload");
 
 /** Users routes **/
 router.get("/", userController.index);
 router.get("/users", userController.getAllUsers);
-router.post("/users", upload.single("file"), userController.store);
+router.post("/users", userController.store);
 router.get("/users/:id", userController.getUserById);
 router.put("/users/:id", userController.updateUser);
 router.delete("/users/:id", userController.deleteUser);
