@@ -26,21 +26,20 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "*", // Allow all origins (for development)
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    allowedHeaders: "Content-Type, Authorization",
+    exposedHeaders: "Cross-Origin-Resource-Policy",
+  })
+);
 app.use(helmet());
 app.use(morgan("combined"));
 app.use("/uploads", express.static("public/uploads"));
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// app.post("/uploads", upload.single("file"), (req, res) => {
-//   console.log("ressssponsseeee", req.body.first_name);
-//   if (!req.file) {
-//     return res.status(400).send("No file uploaded");
-//   }
-//   res.send(`file uploaded ${req.file.filename}`);
-// });
 
 app.use((req, res, next) => {
   console.log("Session:", req.session);

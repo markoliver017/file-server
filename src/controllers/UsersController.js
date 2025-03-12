@@ -12,12 +12,21 @@ module.exports = {
   store: async (req, res) => {
     upload.single("file")(req, res, async (err) => {
       if (err) {
-        return res.status(400).json({ error: err.message });
+        return res.status(400).json({ errors: { user_photo: err.message } });
       }
-
 
       try {
         const data = req.body;
+
+        if (data.password && data.password !== data.passwordConfirmation) {
+          return res
+            .status(400)
+            .json({ errors: { password: `Passwords do not match.` } });
+        }
+
+        delete data.passwordConfirmation;
+        delete data.file;
+
         const newUser = await User.create(data);
 
         const fileUrl = req.file ? `/uploads/${req.file.filename}` : null;
@@ -29,7 +38,7 @@ module.exports = {
             type: "project",
           });
 
-          await newUser.update({ photo_id: newFile.id })
+          await newUser.update({ photo_id: newFile.id });
         }
         const newUserData = await User.findByPk(newUser.id, {
           attributes: ["id", "first_name", "last_name", "email"],
@@ -53,14 +62,16 @@ module.exports = {
         });
         res.status(201).json(newUserData);
       } catch (error) {
-
         if (req.file) {
           fs.unlink(`./public/uploads/${req.file.filename}`, (err) => {
             if (err) console.error("Error deleting file:", err);
           });
         }
 
-        if (error.name === "SequelizeValidationError" || error.name === "SequelizeUniqueConstraintError") {
+        if (
+          error.name === "SequelizeValidationError" ||
+          error.name === "SequelizeUniqueConstraintError"
+        ) {
           const errors = error.errors.reduce((acc, err) => {
             acc[err.path] = err.message;
             return acc;
@@ -70,14 +81,25 @@ module.exports = {
           res.status(500).json({ errors: error.message });
         }
       }
-    })
+    });
   },
 
   // Get all users
   getAllUsers: async (req, res) => {
     try {
       const users = await User.findAll({
-        attributes: ["id", "first_name", "last_name", "email", "full_name"],
+        attributes: [
+          "id",
+          "first_name",
+          "last_name",
+          "middle_name",
+          "suffix",
+          "prefix",
+          "contact_number",
+          "email",
+          "gender",
+          "full_name",
+        ],
         include: [
           {
             attributes: ["id", "blood_type"],
@@ -89,7 +111,13 @@ module.exports = {
             model: Role,
             required: false,
           },
+          {
+            attributes: ["id", "url", "type"],
+            model: File,
+            required: false,
+          },
         ],
+        order: [["createdAt", "DESC"]],
       });
       res.status(200).json(users);
     } catch (error) {

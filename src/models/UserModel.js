@@ -38,20 +38,25 @@ const User = sequelize.define(
     first_name: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      validate: {
-        notEmpty: {
-          msg: "First Name field is required.",
-        },
-      },
       set(value) {
         const formatted =
           value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
         this.setDataValue("first_name", formatted);
       },
+      validate: {
+        notEmpty: {
+          msg: "First Name field is required.",
+        },
+      },
     },
     last_name: {
       type: DataTypes.STRING(50),
       allowNull: false,
+      set(value) {
+        const formatted =
+          value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+        this.setDataValue("last_name", formatted);
+      },
       validate: {
         notEmpty: {
           msg: "Last Name field is required.",
@@ -90,19 +95,27 @@ const User = sequelize.define(
       },
     },
     password: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(255),
       allowNull: false,
-      set(value) {
-        const hashedPassword = bcrypt.hashSync(value, saltRounds);
-        this.setDataValue("password", hashedPassword);
-      },
-      get() {
-        return this.getDataValue("password");
-      },
       validate: {
+        len: {
+          args: [8, 255],
+          msg: "Password must be atleast 8 characters long.",
+        },
         notEmpty: {
           msg: "Password field is required.",
         },
+      },
+      set(value) {
+        if (value.length >= 8) {
+          const hashedPassword = bcrypt.hashSync(value, saltRounds);
+          this.setDataValue("password", hashedPassword);
+        } else {
+          this.setDataValue("password", value);
+        }
+      },
+      get() {
+        return this.getDataValue("password");
       },
     },
     contact_number: {
