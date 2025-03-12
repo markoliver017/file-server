@@ -14,6 +14,7 @@
 
 const { Sequelize } = require("sequelize");
 
+// const sequelize = new Sequelize("mydb", "root", "root", { 
 const sequelize = new Sequelize("mydb", "root", "root", {
   host: "localhost",
   dialect: "mysql", // Use 'mysql' for MySQL databases
