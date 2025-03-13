@@ -47,6 +47,10 @@ const User = sequelize.define(
         notEmpty: {
           msg: "First Name field is required.",
         },
+        is: {
+          args: /^[A-Za-z\s]+$/, // Allows only letters and spaces
+          msg: "First Name can only contain letters and spaces.",
+        },
       },
     },
     last_name: {
@@ -61,9 +65,22 @@ const User = sequelize.define(
         notEmpty: {
           msg: "Last Name field is required.",
         },
+        is: {
+          args: /^[A-Za-z\s]+$/, // Allows only letters and spaces
+          msg: "Last Name can only contain letters and spaces.",
+        },
       },
     },
-    middle_name: { type: DataTypes.STRING(50), allowNull: true },
+    middle_name: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+      validate: {
+        is: {
+          args: /^[A-Za-z\s]+$/, // Allows only letters and spaces
+          msg: "Middle Name can only contain letters and spaces.",
+        },
+      },
+    },
     prefix: { type: DataTypes.STRING(50), allowNull: true },
     suffix: { type: DataTypes.STRING(50), allowNull: true },
     photo_id: { type: DataTypes.INTEGER, allowNull: true },
@@ -114,21 +131,20 @@ const User = sequelize.define(
           this.setDataValue("password", value);
         }
       },
-      get() {
-        return this.getDataValue("password");
-      },
     },
     contact_number: {
       type: DataTypes.STRING(15),
       allowNull: true,
       validate: {
-        len: {
-          args: [11, 13],
-          msg: "Contact number must be 11-13 characters long.",
+        len(value) {
+          if (value && (value.length < 11 || value.length > 13)) {
+            throw new Error("Contact number must be 11-13 characters long.");
+          }
         },
-        is: {
-          args: /^[\d+]+$/,
-          msg: "Invalid contact number format",
+        isValidNumber(value) {
+          if (value && !/^[\d+]+$/.test(value)) {
+            throw new Error("Invalid contact number format");
+          }
         },
       },
     },

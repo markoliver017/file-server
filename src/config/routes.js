@@ -13,6 +13,7 @@ router.get("/users", userController.getAllUsers);
 router.post("/users", userController.store);
 router.get("/users/:id", userController.getUserById);
 router.put("/users/:id", userController.updateUser);
+router.put("/users/:id/files", userController.updateUserPhoto);
 router.delete("/users/:id", userController.deleteUser);
 
 /** Roles routes**/
