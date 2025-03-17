@@ -34,18 +34,33 @@ module.exports = {
 
                 const newUser = await User.create(data);
 
-                const fileUrl = req.file
-                    ? `/uploads/${req.file.filename}`
-                    : null;
-                if (fileUrl) {
-                    const newFile = await File.create({
-                        url: fileUrl,
-                        table_name: "users",
-                        user_id: newUser.id,
-                        type: "project",
-                    });
+                if (data.file_type == "file_upload") {
+                    const fileUrl = req.file
+                        ? `/uploads/${req.file.filename}`
+                        : null;
+                    if (fileUrl) {
+                        const newFile = await File.create({
+                            url: fileUrl,
+                            table_name: "users",
+                            user_id: newUser.id,
+                            type: data.file_type,
+                        });
 
-                    await newUser.update({ photo_id: newFile.id });
+                        await newUser.update({ photo_id: newFile.id });
+                    }
+                } else {
+                    const fileUrl = data.photo_url;
+
+                    if (fileUrl) {
+                        const newFile = await File.create({
+                            url: fileUrl,
+                            table_name: "users",
+                            user_id: newUser.id,
+                            type: data.file_type,
+                        });
+
+                        await newUser.update({ photo_id: newFile.id });
+                    }
                 }
                 const newUserData = await User.findByPk(newUser.id, {
                     attributes: ["id", "first_name", "last_name", "email"],
