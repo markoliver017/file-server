@@ -17,22 +17,22 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(
-  session({
-    secret: "your_secret_key",
-    resave: false,
-    saveUninitialized: false,
-  })
+    session({
+        secret: "your_secret_key",
+        resave: false,
+        saveUninitialized: false,
+    })
 );
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(
-  cors({
-    origin: "*", // Allow all origins (for development)
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    allowedHeaders: "Content-Type, Authorization",
-    exposedHeaders: "Cross-Origin-Resource-Policy",
-  })
+    cors({
+        origin: "*", // Allow all origins (for development)
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+        allowedHeaders: "Content-Type, Authorization",
+        exposedHeaders: "Cross-Origin-Resource-Policy",
+    })
 );
 app.use(helmet());
 app.use(morgan("combined"));
@@ -42,21 +42,21 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
-  console.log("Session:", req.session);
-  console.log("User:", req.user);
-  next();
+    console.log("Session:", req.session);
+    console.log("User:", req.user);
+    next();
 });
 
 app.use("/api", routes);
 
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send("Something broke!");
+    console.error(err.stack);
+    res.status(500).send("Something broke!");
 });
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}`);
 });
 
 //front end

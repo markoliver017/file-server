@@ -231,13 +231,20 @@ module.exports = {
             try {
                 const { id } = req.params;
                 const file = req.file;
+                const data = req.body;
+                let fileUrl = "";
 
-                if (!file) {
+                if (data.type == "file_upload" && !file) {
                     return res
                         .status(404)
                         .json({ error: "No files found to upload!" });
                 }
-                const fileUrl = `/uploads/${file.filename}`;
+
+                if (data.type == "file_upload") {
+                    fileUrl = `/uploads/${file.filename}`;
+                } else {
+                    fileUrl = data.url;
+                }
 
                 const user = await User.findByPk(id);
                 if (!user) {
@@ -249,7 +256,7 @@ module.exports = {
                         url: fileUrl,
                         table_name: "users",
                         user_id: user.id,
-                        type: "project",
+                        type: data.type,
                     });
 
                     user.photo_id = newFile.id;
@@ -274,6 +281,7 @@ module.exports = {
                     }
 
                     existingFile.url = fileUrl; // Assuming you get the new file path from the request body
+                    existingFile.type = data.type; // Assuming you get the new file path from the request body
                     await existingFile.save();
                 }
 
