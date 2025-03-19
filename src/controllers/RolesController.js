@@ -13,7 +13,22 @@ module.exports = {
             const newRole = await Role.create(data);
             res.status(201).json(newRole);
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            if (
+                error.name === "SequelizeValidationError" ||
+                error.name === "SequelizeUniqueConstraintError"
+            ) {
+                const errors = error.errors.reduce((acc, err) => {
+                    if (error.name === "SequelizeUniqueConstraintError") {
+                        acc[err.path] = `${err.path} already exists!`;
+                    } else {
+                        acc[err.path] = err.message;
+                    }
+                    return acc;
+                }, {});
+                res.status(400).json({ errors });
+            } else {
+                res.status(500).json({ errors: error.message });
+            }
         }
     },
 
@@ -65,14 +80,29 @@ module.exports = {
             const { id } = req.params;
             const data = req.body;
             const role = await Role.findByPk(id);
-            if (user) {
+            if (role) {
                 await role.update(data);
                 res.status(200).json(role);
             } else {
                 res.status(404).json({ error: "Role not found" });
             }
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            if (
+                error.name === "SequelizeValidationError" ||
+                error.name === "SequelizeUniqueConstraintError"
+            ) {
+                const errors = error.errors.reduce((acc, err) => {
+                    if (error.name === "SequelizeUniqueConstraintError") {
+                        acc[err.path] = `${err.path} already exists!`;
+                    } else {
+                        acc[err.path] = err.message;
+                    }
+                    return acc;
+                }, {});
+                res.status(500).json({ errors });
+            } else {
+                res.status(500).json({ errors: error.message });
+            }
         }
     },
 
