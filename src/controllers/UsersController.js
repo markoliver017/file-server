@@ -131,7 +131,7 @@ module.exports = {
                         required: false,
                     },
                     {
-                        attributes: ["id", "role_name"],
+                        attributes: ["id", "role_name", "icon"],
                         model: Role,
                         required: false,
                     },
