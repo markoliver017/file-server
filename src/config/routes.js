@@ -6,6 +6,7 @@ const bloodTypeController = require("@controllers/BloodTypesController");
 const authJWTTokenMiddleware = require("@middlewares/authJWTTokenMiddleware");
 const jwt = require("jsonwebtoken");
 const passport = require("@config/passport");
+const menusController = require("@controllers/MenusController");
 
 /** Users routes **/
 router.get("/", userController.index);
@@ -23,6 +24,13 @@ router.post("/roles", roleController.store);
 router.get("/roles/:id", roleController.getRoleById);
 router.put("/roles/:id", roleController.updateRole);
 router.delete("/roles/:id", roleController.deleteRole);
+
+/** Menus routes**/
+router.get("/menus", menusController.getAllMenus);
+router.post("/menus", menusController.store);
+router.get("/menus/:id", menusController.getMenuById);
+router.put("/menus/:id", menusController.updateMenu);
+router.delete("/menus/:id", menusController.deleteMenu);
 
 router.get("/bloodtypes", bloodTypeController.index);
 

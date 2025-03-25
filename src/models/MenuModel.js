@@ -10,20 +10,32 @@ module.exports = (sequelize, DataTypes) => {
             name: {
                 type: DataTypes.STRING(150),
                 allowNull: false,
+                validate: {
+                    notEmpty: { msg: "Name cannot be empty" },
+                },
             },
             has_child: {
-                type: DataTypes.STRING(3),
+                type: DataTypes.BOOLEAN,
                 allowNull: false,
-                defaultValue: "no",
+                defaultValue: false,
+                validate: {
+                    notEmpty: { msg: "Has child cannot be empty" },
+                },
             },
             link: {
                 type: DataTypes.STRING(150),
                 allowNull: true,
+                validate: {
+                    notEmpty: { msg: "Link cannot be empty" },
+                },
             },
             icon: {
                 type: DataTypes.STRING(100),
                 allowNull: false,
                 defaultValue: "FaHome",
+                validate: {
+                    notEmpty: { msg: "Icon cannot be empty" },
+                },
             },
             ctr: {
                 type: DataTypes.INTEGER,
