@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize");
-const sequelize = require("@config/database"); // Database configuration
+const sequelize = require("@config/database");
 
 // Import models
 const User = require("@models/UserModel")(sequelize, Sequelize.DataTypes);

@@ -1,3 +1,13 @@
+// const pool = require("@config/database");
+
+// module.exports = {
+//   fetchAll: async () => {
+//     const [rows] = await pool.query("SELECT * FROM sports");
+//     return rows;
+//   },
+// };
+
+const Role = require("@models/RoleModel");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
@@ -10,25 +20,18 @@ module.exports = (sequelize, DataTypes) => {
                 autoIncrement: true,
                 primaryKey: true,
             },
+            blood_type_id: { type: DataTypes.INTEGER, allowNull: true },
             role_id: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
+                allowNull: true,
                 validate: {
                     async isValidRole(value) {
-                        const Role = sequelize.models.Role; // Get Role model from sequelize
-                        if (!Role) {
-                            throw new Error("Role model is not available.");
-                        }
                         const role = await Role.findByPk(value);
                         if (!role) {
                             throw new Error("Role field is required.");
                         }
                     },
                 },
-            },
-            photo_id: {
-                type: DataTypes.INTEGER,
-                allowNull: true,
             },
             first_name: {
                 type: DataTypes.STRING(50),
@@ -95,6 +98,14 @@ module.exports = (sequelize, DataTypes) => {
             },
             prefix: { type: DataTypes.STRING(50), allowNull: true },
             suffix: { type: DataTypes.STRING(50), allowNull: true },
+            photo_id: { type: DataTypes.INTEGER, allowNull: true },
+            date_of_birth: {
+                type: DataTypes.DATEONLY,
+                allowNull: true,
+                validate: {
+                    isDate: true,
+                },
+            },
             gender: {
                 type: DataTypes.ENUM("male", "female"),
                 allowNull: false,
@@ -143,6 +154,59 @@ module.exports = (sequelize, DataTypes) => {
                     }
                 },
             },
+            contact_number: {
+                type: DataTypes.STRING(20),
+                allowNull: true,
+                validate: {
+                    len(value) {
+                        if (value && (value.length < 11 || value.length > 13)) {
+                            throw new Error(
+                                "Contact number must be 11-13 characters long."
+                            );
+                        }
+                    },
+                    isValidNumber(value) {
+                        if (value && !/^[\d+]+$/.test(value)) {
+                            throw new Error("Invalid contact number format");
+                        }
+                    },
+                },
+            },
+            civil_status: {
+                type: DataTypes.ENUM(
+                    "single",
+                    "married",
+                    "widowed",
+                    "separated"
+                ),
+                allowNull: false,
+                defaultValue: "single",
+            },
+            weight: { type: DataTypes.DECIMAL(5, 2), allowNull: true },
+            health_condition: { type: DataTypes.TEXT, allowNull: true },
+            is_eligible: {
+                type: DataTypes.ENUM(
+                    "eligible",
+                    "not-eligible",
+                    "for verification"
+                ),
+                allowNull: false,
+                defaultValue: "for verification",
+            },
+            nationality: { type: DataTypes.STRING(50), allowNull: true },
+            occupation: { type: DataTypes.STRING(100), allowNull: true },
+            mailing_address: { type: DataTypes.TEXT, allowNull: true },
+            home_address: { type: DataTypes.TEXT, allowNull: true },
+            office_name: { type: DataTypes.STRING(100), allowNull: true },
+            office_address: { type: DataTypes.TEXT, allowNull: true },
+            zip_code: { type: DataTypes.STRING(10), allowNull: true },
+            type_of_donor: {
+                type: DataTypes.ENUM("replacement", "volunteer"),
+                allowNull: false,
+                defaultValue: "volunteer",
+            },
+            patient_name: { type: DataTypes.STRING(100), allowNull: true },
+            relation: { type: DataTypes.STRING(50), allowNull: true },
             full_name: {
                 type: DataTypes.VIRTUAL,
                 get() {
@@ -161,14 +225,36 @@ module.exports = (sequelize, DataTypes) => {
 
     // Define associations in the `associate` method
     User.associate = (models) => {
+        User.belongsTo(models.BloodType, {
+            foreignKey: "blood_type_id",
+            onDelete: "SET NULL",
+        });
         User.belongsTo(models.Role, {
             foreignKey: "role_id",
-            onDelete: "CASCADE",
+            onDelete: "SET NULL",
         });
         User.belongsTo(models.File, {
             foreignKey: "photo_id",
+            onDelete: "SET NULL",
         });
     };
 
     return User;
 };
+
+// Relationships
+// User.belongsTo(BloodType, {
+//     foreignKey: "blood_type_id",
+//     onDelete: "SET NULL",
+// });
+// User.belongsTo(Role, { foreignKey: "role_id", onDelete: "SET NULL" });
+// User.belongsTo(File, { foreignKey: "photo_id", onDelete: "SET NULL" });
+
+// BloodType.hasMany(User, { foreignKey: "blood_type_id" });
+
+// Role.hasMany(User, { foreignKey: "role_id" });
+
+// File.belongsTo(User, { foreignKey: "user_id", onDelete: "CASCADE" });
+
+// Menu.hasMany(Submenu, { foreignKey: "menu_id" });
+// Submenu.belongsTo(Menu, { foreignKey: "menu_id", onDelete: "CASCADE" });

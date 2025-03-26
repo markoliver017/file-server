@@ -23,11 +23,11 @@ module.exports = (sequelize, DataTypes) => {
     );
 
     // Define associations in the `associate` method
-    BloodType.associate = (models) => {
-        BloodType.hasMany(models.User, {
-            foreignKey: "blood_type_id",
-        });
-    };
+    // BloodType.associate = (models) => {
+    //     BloodType.hasMany(models.User, {
+    //         foreignKey: "blood_type_id",
+    //     });
+    // };
 
     return BloodType;
 };

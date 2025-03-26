@@ -118,6 +118,11 @@ module.exports = {
                 ],
                 include: [
                     {
+                        attributes: ["id", "blood_type"],
+                        model: BloodType,
+                        required: false,
+                    },
+                    {
                         attributes: ["id", "role_name", "icon"],
                         model: Role,
                         required: false,
@@ -143,6 +148,11 @@ module.exports = {
             const user = await User.findByPk(id, {
                 attributes: ["id", "first_name", "last_name", "email"],
                 include: [
+                    {
+                        attributes: ["id", "blood_type"],
+                        model: BloodType,
+                        required: false,
+                    },
                     {
                         attributes: ["id", "role_name"],
                         model: Role,
@@ -237,6 +247,7 @@ module.exports = {
                     const newFile = await File.create({
                         url: fileUrl,
                         table_name: "users",
+                        user_id: user.id,
                         type: data.type,
                     });
 

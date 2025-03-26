@@ -1,4 +1,5 @@
-const { User, Role, Menu, Submenu } = require("@models/index");
+const { Menu, Submenu, sequelize } = require("@models/index");
+const { Op } = require("sequelize");
 
 module.exports = {
     // Index route
@@ -8,11 +9,24 @@ module.exports = {
 
     // Create a new role
     store: async (req, res) => {
+        const data = req.body;
+        const { ctr } = data;
+        const transaction = await sequelize.transaction();
         try {
-            const data = req.body;
-            const newMenu = await Menu.create(data);
+            if (ctr !== undefined) {
+                await Menu.increment(
+                    { ctr: 1 },
+                    { where: { ctr: { [Op.gte]: ctr } }, transaction }
+                );
+            }
+
+            const newMenu = await Menu.create(data, { transaction });
+
+            await transaction.commit();
+
             res.status(201).json(newMenu);
         } catch (error) {
+            await transaction.rollback();
             if (
                 error.name === "SequelizeValidationError" ||
                 error.name === "SequelizeUniqueConstraintError"
@@ -51,6 +65,7 @@ module.exports = {
                         required: false,
                     },
                 ],
+                order: [["ctr", "ASC"]],
             });
 
             res.status(200).json(menus);
@@ -78,17 +93,52 @@ module.exports = {
 
     // Update a user by ID
     updateMenu: async (req, res) => {
+        const { id } = req.params;
+        const data = req.body;
+        const { ctr } = data;
+        const transaction = await sequelize.transaction();
+
         try {
-            const { id } = req.params;
-            const data = req.body;
+            const existingMenu = await Menu.findByPk(id, { transaction });
+            if (!existingMenu) {
+                await transaction.rollback();
+                return res.status(404).json({ message: "Menu not found" });
+            }
+            const oldCtr = existingMenu.ctr;
+            if (ctr !== undefined && oldCtr != ctr) {
+                if (ctr > oldCtr) {
+                    // Shift down (decrease `ctr` for affected records)
+                    await Menu.increment(
+                        { ctr: -1 },
+                        {
+                            where: { ctr: { [Op.gt]: oldCtr, [Op.lte]: ctr } },
+                            transaction,
+                        }
+                    );
+                } else {
+                    // Shift up (increase `ctr` for affected records)
+                    await Menu.increment(
+                        { ctr: 1 },
+                        {
+                            where: { ctr: { [Op.gte]: ctr, [Op.lt]: oldCtr } },
+                            transaction,
+                        }
+                    );
+                }
+            }
+
             const menu = await Menu.findByPk(id);
+
             if (menu) {
-                await menu.update(data);
+                await menu.update(data, { transaction });
+                await transaction.commit();
                 res.status(200).json(menu);
             } else {
+                await transaction.rollback();
                 res.status(404).json({ error: "Menu not found" });
             }
         } catch (error) {
+            await transaction.rollback();
             if (
                 error.name === "SequelizeValidationError" ||
                 error.name === "SequelizeUniqueConstraintError"
