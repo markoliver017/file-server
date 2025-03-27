@@ -6,7 +6,6 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 autoIncrement: true,
                 primaryKey: true,
-                allowNull: false,
             },
             menu_id: {
                 type: DataTypes.INTEGER,
@@ -15,20 +14,42 @@ module.exports = (sequelize, DataTypes) => {
             name: {
                 type: DataTypes.STRING(150),
                 allowNull: false,
+                validate: {
+                    notEmpty: { msg: "Name cannot be empty" },
+                },
             },
             has_child: {
                 type: DataTypes.STRING(10),
                 allowNull: false,
-                defaultValue: "no",
+                defaultValue: false,
+                validate: {
+                    notEmpty: { msg: "Has child cannot be empty" },
+                },
             },
             link: {
                 type: DataTypes.STRING(150),
                 allowNull: true,
+                validate: {
+                    customValidator(value) {
+                        if (
+                            this.has_child !== undefined &&
+                            this.has_child == 0 &&
+                            !value
+                        ) {
+                            throw new Error(
+                                "Link is required when has_child is set to 'No'"
+                            );
+                        }
+                    },
+                },
             },
             icon: {
                 type: DataTypes.STRING(100),
                 allowNull: false,
                 defaultValue: "FaHome",
+                validate: {
+                    notEmpty: { msg: "Icon cannot be empty" },
+                },
             },
             ctr: {
                 type: DataTypes.INTEGER,
@@ -63,6 +84,7 @@ module.exports = (sequelize, DataTypes) => {
     Submenu.associate = (models) => {
         Submenu.belongsTo(models.Menu, {
             foreignKey: "menu_id",
+            onDelete: "RESTRICT",
         });
     };
 

@@ -163,7 +163,7 @@ module.exports = (sequelize, DataTypes) => {
     User.associate = (models) => {
         User.belongsTo(models.Role, {
             foreignKey: "role_id",
-            onDelete: "CASCADE",
+            onDelete: "RESTRICT",
         });
         User.belongsTo(models.File, {
             foreignKey: "photo_id",

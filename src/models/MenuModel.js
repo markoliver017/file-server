@@ -26,7 +26,17 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(150),
                 allowNull: true,
                 validate: {
-                    notEmpty: { msg: "Link cannot be empty" },
+                    customValidator(value) {
+                        if (
+                            this.has_child !== undefined &&
+                            this.has_child == 0 &&
+                            !value
+                        ) {
+                            throw new Error(
+                                "Link is required when has_child is set to 'No'"
+                            );
+                        }
+                    },
                 },
             },
             icon: {

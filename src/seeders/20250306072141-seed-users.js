@@ -10,7 +10,7 @@ module.exports = {
             "Users",
             [
                 {
-                    role_id: 1,
+                    role_id: 3,
                     first_name: faker.person.firstName(),
                     last_name: faker.person.lastName(),
                     middle_name: faker.person.middleName(),
