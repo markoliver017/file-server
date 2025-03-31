@@ -29,6 +29,20 @@ module.exports = (sequelize, DataTypes) => {
             photo_id: {
                 type: DataTypes.INTEGER,
                 allowNull: true,
+                validate: {
+                    async isValidFile(value) {
+                        const File = sequelize.models.File; // Get Role model from sequelize
+                        if (!File) {
+                            throw new Error("File model is not available.");
+                        }
+                        if (value) {
+                            const file = await File.findByPk(value);
+                            if (!file) {
+                                throw new Error("Invalid file ID.");
+                            }
+                        }
+                    },
+                },
             },
             first_name: {
                 type: DataTypes.STRING(50),
@@ -102,6 +116,10 @@ module.exports = (sequelize, DataTypes) => {
                     notEmpty: {
                         msg: "Gender field is required.",
                     },
+                    isIn: {
+                        args: [["male", "female"]],
+                        msg: "Invalid gender type.",
+                    },
                 },
             },
             is_active: {
@@ -167,6 +185,7 @@ module.exports = (sequelize, DataTypes) => {
         });
         User.belongsTo(models.File, {
             foreignKey: "photo_id",
+            onDelete: "SET NULL",
         });
     };
 

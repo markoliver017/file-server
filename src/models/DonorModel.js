@@ -1,174 +1,128 @@
-// const pool = require("@config/database");
-
-// module.exports = {
-//   fetchAll: async () => {
-//     const [rows] = await pool.query("SELECT * FROM sports");
-//     return rows;
-//   },
-// };
-
-const Role = require("@models/RoleModel");
-const bcrypt = require("bcrypt");
-const saltRounds = 10;
-
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define(
-        "User",
+    const Donor = sequelize.define(
+        "Donor",
         {
             id: {
                 type: DataTypes.INTEGER,
                 autoIncrement: true,
                 primaryKey: true,
             },
-            blood_type_id: { type: DataTypes.INTEGER, allowNull: true },
-            role_id: {
+            agency_id: {
                 type: DataTypes.INTEGER,
                 allowNull: true,
                 validate: {
-                    async isValidRole(value) {
-                        const role = await Role.findByPk(value);
-                        if (!role) {
-                            throw new Error("Role field is required.");
+                    notEmpty: {
+                        msg: "Agency ID is required.",
+                    },
+                    async isValidAgency(value) {
+                        const Agency = sequelize.models.Agency;
+                        if (!Agency) {
+                            throw new Error("Agency model is not available.");
+                        }
+                        if (value) {
+                            const agency = await Agency.findByPk(value);
+                            if (!agency) {
+                                throw new Error("Invalid Agency ID.");
+                            }
                         }
                     },
                 },
             },
-            first_name: {
-                type: DataTypes.STRING(50),
+            user_id: {
+                type: DataTypes.INTEGER,
                 allowNull: false,
-                set(value) {
-                    const formatted = value
-                        .toLowerCase()
-                        .split(" ")
-                        .map(
-                            (word) =>
-                                word.charAt(0).toUpperCase() + word.slice(1)
-                        )
-                        .join(" ");
-
-                    this.setDataValue("first_name", formatted);
-                },
                 validate: {
                     notEmpty: {
-                        msg: "First Name field is required.",
+                        msg: "User ID is required.",
                     },
-                    is: {
-                        args: /^[A-Za-z\s]+$/, // Allows only letters and spaces
-                        msg: "First Name can only contain letters and spaces.",
+                    async isValidUser(value) {
+                        const User = sequelize.models.User;
+                        if (!User) {
+                            throw new Error("User model is not available.");
+                        }
+                        if (value) {
+                            const user = await User.findByPk(value);
+                            if (!user) {
+                                throw new Error("Invalid User ID.");
+                            }
+                        }
                     },
                 },
             },
-            last_name: {
-                type: DataTypes.STRING(50),
-                allowNull: false,
-                set(value) {
-                    const formatted = value
-                        .toLowerCase()
-                        .split(" ")
-                        .map(
-                            (word) =>
-                                word.charAt(0).toUpperCase() + word.slice(1)
-                        )
-                        .join(" ");
-
-                    this.setDataValue("last_name", formatted);
-                },
-                validate: {
-                    notEmpty: {
-                        msg: "Last Name field is required.",
-                    },
-                    is: {
-                        args: /^[A-Za-z\s]+$/, // Allows only letters and spaces
-                        msg: "Last Name can only contain letters and spaces.",
-                    },
-                },
-            },
-            middle_name: {
-                type: DataTypes.STRING(50),
+            blood_type_id: {
+                type: DataTypes.INTEGER,
                 allowNull: true,
                 validate: {
-                    isValid(value) {
-                        if (value && !/^[A-Za-z\s]+$/.test(value)) {
-                            throw new Error(
-                                "Middle Name can only contain letters and spaces."
-                            );
+                    async isValidUser(value) {
+                        const User = sequelize.models.User;
+                        if (!User) {
+                            throw new Error("User model is not available.");
+                        }
+                        if (value) {
+                            const user = await User.findByPk(value);
+                            if (!user) {
+                                throw new Error("Invalid User ID.");
+                            }
                         }
                     },
                 },
             },
-            prefix: { type: DataTypes.STRING(50), allowNull: true },
-            suffix: { type: DataTypes.STRING(50), allowNull: true },
-            photo_id: { type: DataTypes.INTEGER, allowNull: true },
             date_of_birth: {
                 type: DataTypes.DATEONLY,
-                allowNull: true,
+                allowNull: false,
                 validate: {
                     isDate: true,
+                    notEmpty: {
+                        msg: "Birthdate is required.",
+                    },
                 },
             },
-            gender: {
-                type: DataTypes.ENUM("male", "female"),
+            address: {
+                type: DataTypes.TEXT,
                 allowNull: false,
                 validate: {
                     notEmpty: {
-                        msg: "Gender field is required.",
+                        msg: "Address is required.",
                     },
                 },
             },
-            is_active: {
-                type: DataTypes.TINYINT,
-                allowNull: false,
-                defaultValue: 1,
-            },
-            email: {
-                type: DataTypes.STRING(250),
-                allowNull: false,
-                unique: true,
-                validate: {
-                    isEmail: {
-                        msg: "Email field must be a valid email.",
-                    },
-                },
-            },
-            password: {
+            barangay: {
                 type: DataTypes.STRING(255),
                 allowNull: false,
                 validate: {
-                    len: {
-                        args: [8, 255],
-                        msg: "Password must be atleast 8 characters long.",
-                    },
                     notEmpty: {
-                        msg: "Password field is required.",
+                        msg: "Barangay is required.",
                     },
-                },
-                set(value) {
-                    if (value.length >= 8) {
-                        const hashedPassword = bcrypt.hashSync(
-                            value,
-                            saltRounds
-                        );
-                        this.setDataValue("password", hashedPassword);
-                    } else {
-                        this.setDataValue("password", value);
-                    }
                 },
             },
-            contact_number: {
-                type: DataTypes.STRING(20),
-                allowNull: true,
+            city: {
+                type: DataTypes.STRING(255),
+                allowNull: false,
                 validate: {
-                    len(value) {
-                        if (value && (value.length < 11 || value.length > 13)) {
-                            throw new Error(
-                                "Contact number must be 11-13 characters long."
-                            );
-                        }
+                    notEmpty: {
+                        msg: "City is required.",
                     },
-                    isValidNumber(value) {
-                        if (value && !/^[\d+]+$/.test(value)) {
-                            throw new Error("Invalid contact number format");
-                        }
+                },
+            },
+            zip_code: {
+                type: DataTypes.STRING(10),
+                allowNull: false,
+                validate: {
+                    isNumeric: {
+                        msg: "Zip Code must be numeric.",
+                    },
+                    notEmpty: {
+                        msg: "Zip Code is required.",
+                    },
+                },
+            },
+            country: {
+                type: DataTypes.STRING(50),
+                allowNull: false,
+                defaultValue: "Philippines",
+                validate: {
+                    notEmpty: {
+                        msg: "Country is required.",
                     },
                 },
             },
@@ -176,85 +130,129 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.ENUM(
                     "single",
                     "married",
-                    "widowed",
-                    "separated"
+                    "divorced",
+                    "separated",
+                    "widowed"
                 ),
                 allowNull: false,
                 defaultValue: "single",
+                validate: {
+                    isIn: {
+                        args: [
+                            [
+                                "single",
+                                "married",
+                                "divorced",
+                                "separated",
+                                "widowed",
+                            ],
+                        ],
+                        msg: "Invalid Civil status type.",
+                    },
+                },
             },
-            weight: { type: DataTypes.DECIMAL(5, 2), allowNull: true },
-            health_condition: { type: DataTypes.TEXT, allowNull: true },
-            is_eligible: {
-                type: DataTypes.ENUM(
-                    "eligible",
-                    "not-eligible",
-                    "for verification"
-                ),
+            contact_number: {
+                type: DataTypes.STRING(15),
                 allowNull: false,
-                defaultValue: "for verification",
+                validate: {
+                    notEmpty: {
+                        msg: "Contact number is required.",
+                    },
+                    is: {
+                        args: /^\(?(\+63|\(0[0-9]\)|0[0-9])\)?[-. ]?([0-9]{2,4})[-. ]?([0-9]{3,5})$/,
+                        msg: "Contact number must be a valid telephone or mobile number.",
+                    },
+                    len: {
+                        args: [10, 18],
+                        msg: "Contact number must be between 10 and 18 digits.",
+                    },
+                },
             },
-            nationality: { type: DataTypes.STRING(50), allowNull: true },
-            occupation: { type: DataTypes.STRING(100), allowNull: true },
-            mailing_address: { type: DataTypes.TEXT, allowNull: true },
-            home_address: { type: DataTypes.TEXT, allowNull: true },
-            office_name: { type: DataTypes.STRING(100), allowNull: true },
-            office_address: { type: DataTypes.TEXT, allowNull: true },
-            zip_code: { type: DataTypes.STRING(10), allowNull: true },
-            type_of_donor: {
-                type: DataTypes.ENUM("replacement", "volunteer"),
+            nationality: {
+                type: DataTypes.STRING,
                 allowNull: false,
-                defaultValue: "volunteer",
+                defaultValue: "Filipino",
             },
-            patient_name: { type: DataTypes.STRING(100), allowNull: true },
-            relation: { type: DataTypes.STRING(50), allowNull: true },
-            full_name: {
-                type: DataTypes.VIRTUAL,
-                get() {
-                    return `${this.first_name} ${this.last_name}`;
+            occupation: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            is_regular_donor: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            },
+            is_verified: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            },
+            verified_by: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+                validate: {
+                    async isValidUser(value) {
+                        const User = sequelize.models.User;
+                        if (!User) {
+                            throw new Error("User model is not available.");
+                        }
+                        if (value) {
+                            const user = await User.findByPk(value);
+                            if (!user) {
+                                throw new Error("Invalid User ID.");
+                            }
+                        }
+                    },
+                },
+            },
+            member_donor_id: {
+                type: DataTypes.STRING,
+                allowNull: true,
+                // validate: {
+                //     is: /^\d{8}\d{4}$/,
+                // },
+            },
+            medical_history: {
+                type: DataTypes.TEXT,
+                allowNull: false,
+            },
+            medical_history_file_id: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+                validate: {
+                    async isValidFile(value) {
+                        const File = sequelize.models.File; // Get Role model from sequelize
+                        if (!File) {
+                            throw new Error("File model is not available.");
+                        }
+                        if (value) {
+                            const file = await File.findByPk(value);
+                            if (!file) {
+                                throw new Error("Invalid file ID.");
+                            }
+                        }
+                    },
                 },
             },
         },
-        { timestamps: true, tableName: "users" }
+        { timestamps: true, tableName: "donors" }
     );
 
-    User.prototype.validPassword = async function (password) {
-        const currentPass = this.password;
-        // const isValid = await bcrypt.compare(password, currentPass);
-        return await bcrypt.compare(password, currentPass);
-    };
-
-    // Define associations in the `associate` method
-    User.associate = (models) => {
-        User.belongsTo(models.BloodType, {
+    Donor.associate = (models) => {
+        Donor.belongsTo(models.Agency, {
+            foreignKey: "agency_id",
+        });
+        Donor.belongsTo(models.User, {
+            foreignKey: "user_id",
+        });
+        Donor.belongsTo(models.BloodType, {
             foreignKey: "blood_type_id",
-            onDelete: "SET NULL",
         });
-        User.belongsTo(models.Role, {
-            foreignKey: "role_id",
-            onDelete: "SET NULL",
+        Donor.belongsTo(models.User, {
+            foreignKey: "verified_by",
         });
-        User.belongsTo(models.File, {
-            foreignKey: "photo_id",
-            onDelete: "SET NULL",
+        Donor.belongsTo(models.File, {
+            foreignKey: "medical_history_file_id",
         });
     };
 
-    return User;
+    return Donor;
 };
-
-// Relationships
-// User.belongsTo(BloodType, {
-//     foreignKey: "blood_type_id",
-//     onDelete: "SET NULL",
-// });
-// User.belongsTo(Role, { foreignKey: "role_id", onDelete: "SET NULL" });
-// User.belongsTo(File, { foreignKey: "photo_id", onDelete: "SET NULL" });
-
-// BloodType.hasMany(User, { foreignKey: "blood_type_id" });
-
-// Role.hasMany(User, { foreignKey: "role_id" });
-
-// File.belongsTo(User, { foreignKey: "user_id", onDelete: "CASCADE" });
-
-// Menu.hasMany(Submenu, { foreignKey: "menu_id" });
-// Submenu.belongsTo(Menu, { foreignKey: "menu_id", onDelete: "CASCADE" });

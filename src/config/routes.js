@@ -4,10 +4,14 @@ const userController = require("@controllers/UsersController");
 const roleController = require("@controllers/RolesController");
 const bloodTypeController = require("@controllers/BloodTypesController");
 const authJWTTokenMiddleware = require("@middlewares/authJWTTokenMiddleware");
+const auditLogger = require("@middlewares/auditLoggerMiddleware");
 const jwt = require("jsonwebtoken");
 const passport = require("@config/passport");
 const menusController = require("@controllers/MenusController");
 const subMenusController = require("@controllers/SubMenuController");
+
+/* middlewares */
+router.use(auditLogger);
 
 /** Users routes **/
 router.get("/", userController.index);

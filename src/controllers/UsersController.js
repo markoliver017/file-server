@@ -296,3 +296,37 @@ module.exports = {
         }
     },
 };
+
+// try {
+//     const { email, password } = req.body;
+//     const user = await User.findOne({ where: { email } });
+
+//     if (!user) {
+//         throw new Error("Invalid credentials");
+//     }
+
+//     // Log successful login
+//     await logAuditTrail({
+//         userId: user.id,
+//         ip: req.ip,
+//         userAgent: req.headers["user-agent"],
+//         page: req.originalUrl,
+//         action: req.method,
+//         details: "User logged in",
+//     });
+
+//     res.json({ message: "Login successful", user });
+// } catch (error) {
+//     await logAuditTrail({
+//         userId: null,
+//         ip: req.ip,
+//         userAgent: req.headers["user-agent"],
+//         page: req.originalUrl,
+//         action: req.method,
+//         isError: true,
+//         details: error.message,
+//         stackTrace: error.stack,
+//     });
+
+//     res.status(401).json({ error: error.message });
+// }

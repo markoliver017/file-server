@@ -12,6 +12,37 @@ const File = require("@models/FileModel")(sequelize, Sequelize.DataTypes);
 const Menu = require("@models/MenuModel")(sequelize, Sequelize.DataTypes);
 const Submenu = require("@models/SubMenuModel")(sequelize, Sequelize.DataTypes);
 
+const Agency = require("@models/AgencyModel")(sequelize, Sequelize.DataTypes);
+const AgencyCoordinator = require("@models/AgencyCoordinatorModel")(
+    sequelize,
+    Sequelize.DataTypes
+);
+const Donor = require("@models/DonorModel")(sequelize, Sequelize.DataTypes);
+const BloodDonationEvent = require("@/src/models/BloodDonationEventModel")(
+    sequelize,
+    Sequelize.DataTypes
+);
+const BookingSchedule = require("@models/BookingScheduleModel")(
+    sequelize,
+    Sequelize.DataTypes
+);
+const DonorAppointmentInfo = require("@models/DonorAppointmentInfoModel")(
+    sequelize,
+    Sequelize.DataTypes
+);
+const AuditTrail = require("@models/AuditTrailModel")(
+    sequelize,
+    Sequelize.DataTypes
+);
+const Notification = require("@models/NotificationModel")(
+    sequelize,
+    Sequelize.DataTypes
+);
+const EmailNotification = require("@models/EmailNotificationModel")(
+    sequelize,
+    Sequelize.DataTypes
+);
+
 // Collect all models in an object for easy access
 const models = {
     User,
@@ -20,6 +51,15 @@ const models = {
     File,
     Menu,
     Submenu,
+    Agency,
+    AgencyCoordinator,
+    Donor,
+    BloodDonationEvent,
+    BookingSchedule,
+    DonorAppointmentInfo,
+    AuditTrail,
+    Notification,
+    EmailNotification,
 };
 
 // Set up associations by calling associate methods
