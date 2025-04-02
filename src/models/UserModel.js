@@ -112,10 +112,8 @@ module.exports = (sequelize, DataTypes) => {
             gender: {
                 type: DataTypes.ENUM("male", "female"),
                 allowNull: false,
+                defaultValue: "male",
                 validate: {
-                    notEmpty: {
-                        msg: "Gender field is required.",
-                    },
                     isIn: {
                         args: [["male", "female"]],
                         msg: "Invalid gender type.",

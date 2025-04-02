@@ -181,6 +181,24 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false,
             },
+            donor_file_id: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+                validate: {
+                    async isValidFile(value) {
+                        const File = sequelize.models.File; // Get Role model from sequelize
+                        if (!File) {
+                            throw new Error("File model is not available.");
+                        }
+                        if (value) {
+                            const file = await File.findByPk(value);
+                            if (!file) {
+                                throw new Error("Invalid file ID.");
+                            }
+                        }
+                    },
+                },
+            },
             is_verified: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false,
