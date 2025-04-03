@@ -1,0 +1,11 @@
+Restrictions
+Find a Donation Drive – Displays list/map of upcoming blood drives.
+	Allow donors to register on ongoing event?
+
+
+Organizers
+Create a Donation Drives
+	Date Range - One day only.
+
+Emergency Request – Directs to a form for urgent blood requests.
+	Who are the end users - Donors or another user (patients / mbd team / other hospitals).
