@@ -53,15 +53,17 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: true,
                 validate: {
-                    async isValidUser(value) {
-                        const User = sequelize.models.User;
-                        if (!User) {
-                            throw new Error("User model is not available.");
+                    async isValidBloodType(value) {
+                        const BloodType = sequelize.models.BloodType;
+                        if (!BloodType) {
+                            throw new Error(
+                                "Blood Type model is not available."
+                            );
                         }
                         if (value) {
-                            const user = await User.findByPk(value);
-                            if (!user) {
-                                throw new Error("Invalid User ID.");
+                            const bloodType = await BloodType.findByPk(value);
+                            if (!bloodType) {
+                                throw new Error("Invalid Blood type ID.");
                             }
                         }
                     },

@@ -66,6 +66,15 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.TEXT,
                 allowNull: true,
             },
+            date_range: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                validate: {
+                    notEmpty: {
+                        msg: "Date Range cannot be empty.",
+                    },
+                },
+            },
             status: {
                 type: DataTypes.ENUM("scheduled", "for approval", "cancelled"),
                 allowNull: false,

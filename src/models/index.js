@@ -30,6 +30,10 @@ const DonorAppointmentInfo = require("@models/DonorAppointmentInfoModel")(
     sequelize,
     Sequelize.DataTypes
 );
+const BloodRequest = require("@models/BloodRequestModel")(
+    sequelize,
+    Sequelize.DataTypes
+);
 const AuditTrail = require("@models/AuditTrailModel")(
     sequelize,
     Sequelize.DataTypes
@@ -57,6 +61,7 @@ const models = {
     BloodDonationEvent,
     BookingSchedule,
     DonorAppointmentInfo,
+    BloodRequest,
     AuditTrail,
     Notification,
     EmailNotification,

@@ -68,6 +68,17 @@ module.exports = (sequelize, DataTypes) => {
                     },
                 },
             },
+            status: {
+                type: DataTypes.ENUM("open", "closed"),
+                allowNull: false,
+                defaultValue: "open",
+                validate: {
+                    isIn: {
+                        args: [["open", "closed"]],
+                        msg: "Invalid status type.",
+                    },
+                },
+            },
             max_limit: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
