@@ -18,9 +18,13 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
     session({
-        secret: "your_secret_key",
+        secret: "your-secret-key",
         resave: false,
-        saveUninitialized: false,
+        saveUninitialized: true,
+        cookie: {
+            maxAge: 15 * 60 * 1000, // 15 minutes
+            rolling: true, // refresh the cookie on each request
+        },
     })
 );
 app.use(passport.initialize());

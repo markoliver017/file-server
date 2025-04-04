@@ -15,7 +15,7 @@ router.use(auditLogger);
 
 /** Users routes **/
 router.get("/", userController.index);
-router.get("/users", userController.getAllUsers);
+router.get("/users", authJWTTokenMiddleware, userController.getAllUsers);
 router.post("/users", userController.store);
 router.get("/users/:id", userController.getUserById);
 router.put("/users/:id", userController.updateUser);
@@ -51,7 +51,7 @@ router.post("/login", (req, res, next) => {
         if (err) {
             return res
                 .status(500)
-                .json({ error: true, message: "Internal Server Error" });
+                .json({ error: true, message: "Internal Server Error", err });
         }
         if (!user) {
             return res
@@ -69,6 +69,20 @@ router.post("/login", (req, res, next) => {
                 .json({ error: false, message: "Login successful", user });
         });
     })(req, res, next);
+});
+
+router.get("/validate_login", (req, res) => {
+    if (req.isAuthenticated()) {
+        return res.status(200).json({
+            authenticated: true,
+            // user: req.user
+            session: req.session,
+        });
+    } else {
+        return res
+            .status(401)
+            .json({ authenticated: false, message: "Not logged in" });
+    }
 });
 
 /* AUTHENTICATION TOKEN */
