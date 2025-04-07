@@ -1,0 +1,21 @@
+Blood Drive Hosting - BLOOD DRIVE SCHEDULE
+Apply to Host a Blood Drive - AGENCY REGISTRATION
+Blood Program Leader Login - AGENCY - ACCOUNT MANAGER / COORDINATOR LOG-IN
+Address:
+Remove Country fields, Add Municipality and Country for all the forms.
+
+The approved blood drive should be shown in colors on the event calendar for better visibility.
+
+is Regular Donor - Regular Donor with options (Yes/No)
+Add fields : Last Donation Date: & Blood Service Facility/Hospital/Location:
+Instead of upload donor id; upload government ID;
+
+Donor ID
+instead of sign (+/-) should be (pos/neg)
+
+Sex instead of gender
+
+Delete the Medical History field and uploads.
+
+Allow data imports for past blood drive events.
+
