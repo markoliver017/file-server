@@ -18,7 +18,7 @@ const AgencyCoordinator = require("@models/AgencyCoordinatorModel")(
     Sequelize.DataTypes
 );
 const Donor = require("@models/DonorModel")(sequelize, Sequelize.DataTypes);
-const BloodDonationEvent = require("@/src/models/BloodDonationEventModel")(
+const BloodDonationEvent = require("@models/BloodDonationEventModel")(
     sequelize,
     Sequelize.DataTypes
 );
