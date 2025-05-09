@@ -8,10 +8,11 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
             },
             url: { type: DataTypes.TEXT, allowNull: false },
-            table_name: { type: DataTypes.STRING(255), allowNull: false },
+            // table_name: { type: DataTypes.STRING(255), allowNull: false },
             type: {
                 type: DataTypes.ENUM("online", "file_upload"),
                 allowNull: false,
+                defaultValue: "file_upload",
             },
         },
         { timestamps: true, tableName: "files" }

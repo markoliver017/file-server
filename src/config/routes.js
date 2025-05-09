@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("@controllers/UsersController");
+const uploadController = require("@controllers/UploadController");
 const roleController = require("@controllers/RolesController");
 const bloodTypeController = require("@controllers/BloodTypesController");
 const authJWTTokenMiddleware = require("@middlewares/authJWTTokenMiddleware");
@@ -12,6 +13,10 @@ const subMenusController = require("@controllers/SubMenuController");
 
 /* middlewares */
 router.use(auditLogger);
+
+/* File Upload */
+router.post("/uploads", uploadController.uploadUserPhoto);
+router.put("/uploads/:id", uploadController.updateUserPhoto);
 
 /** Users routes **/
 router.get("/", userController.index);

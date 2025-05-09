@@ -3,8 +3,8 @@ require("module-alias/register");
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const dotenv = require("dotenv");
 const session = require("express-session");
+const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const passport = require("@config/passport");
 const helmet = require("helmet");
@@ -38,6 +38,7 @@ app.use(
         exposedHeaders: "Cross-Origin-Resource-Policy",
     })
 );
+
 app.use(helmet());
 app.use(morgan("combined"));
 app.use("/uploads", express.static("public/uploads"));
