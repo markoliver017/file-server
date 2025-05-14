@@ -22,12 +22,10 @@ module.exports = {
                 let upload_type = data?.type || "file_upload";
 
                 if (upload_type == "file_upload" && !file) {
-                    return res
-                        .status(404)
-                        .json({
-                            success: false,
-                            message: "No files found to upload!",
-                        });
+                    return res.status(404).json({
+                        success: false,
+                        message: "No files found to upload!",
+                    });
                 }
 
                 if (upload_type == "file_upload") {
@@ -42,6 +40,7 @@ module.exports = {
                     type: data.type,
                 });
 
+                console.log("upload successfully", newFile);
                 res.status(200).json({
                     success: true,
                     message: "User photo has been updated successfully!",
