@@ -17,6 +17,7 @@ router.use(auditLogger);
 /* File Upload */
 router.post("/uploads", uploadController.uploadUserPhoto);
 router.put("/uploads/:id", uploadController.updateUserPhoto);
+router.post("/upload-pdf", uploadController.uploadPdfFile);
 
 /** Users routes **/
 router.get("/", userController.index);
