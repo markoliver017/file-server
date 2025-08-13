@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 defaultValue: "file_upload",
             },
+            environment: {
+                type: DataTypes.ENUM("development", "production"),
+                allowNull: false,
+                defaultValue: "development",
+            },
         },
         { timestamps: true, tableName: "files" }
     );

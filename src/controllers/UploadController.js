@@ -3,6 +3,7 @@ const upload = require("@/utils/upload");
 const { File } = require("../models");
 const dotenv = require("dotenv");
 const uploadPdf = require("@/utils/uploadPdf");
+const { env } = require("process");
 dotenv.config();
 
 //api endpoint post: http://localhost:5000/api/uploads
@@ -39,6 +40,7 @@ module.exports = {
                 const newFile = await File.create({
                     url: fileUrl,
                     type: data.type,
+                    environment: process.env.NODE_ENV || "development",
                 });
 
                 console.log("upload successfully", newFile);
