@@ -19,6 +19,10 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 defaultValue: "development",
             },
+            system_name: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
         },
         { timestamps: true, tableName: "files" }
     );

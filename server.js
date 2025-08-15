@@ -39,6 +39,21 @@ app.use(
     })
 );
 
+app.use("/uploads", (req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "https://pedbc.pcmc.gov.ph");
+    res.header("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
+    res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, Content-Type, Accept, Authorization, Cache-Control"
+    );
+    res.header("Cache-Control", "public, max-age=31536000, immutable");
+
+    if (req.method === "OPTIONS") {
+        return res.status(204).end();
+    }
+    next();
+});
+
 app.use(helmet());
 app.use(morgan("combined"));
 app.use("/uploads", express.static("public/uploads"));

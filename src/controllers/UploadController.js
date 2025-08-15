@@ -39,8 +39,12 @@ module.exports = {
 
                 const newFile = await File.create({
                     url: fileUrl,
-                    type: data.type,
-                    environment: process.env.NODE_ENV || "development",
+                    type: data?.type,
+                    environment:
+                        data?.environment ||
+                        process.env.NODE_ENV ||
+                        "development",
+                    system_name: data?.system_name || "SYSTEM NAME",
                 });
 
                 console.log("upload successfully", newFile);
