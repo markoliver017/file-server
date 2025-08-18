@@ -9,6 +9,9 @@ dotenv.config();
 //api endpoint post: http://localhost:5000/api/uploads
 //api endpoint put: http://localhost:5000/api/uploads/:id
 module.exports = {
+    index: async (req, res) => {
+        return res.json({ message: "Upload controller is up and running!" });
+    },
     uploadUserPhoto: async (req, res) => {
         upload.single("file")(req, res, async (err) => {
             if (err) {
@@ -44,7 +47,7 @@ module.exports = {
                         data?.environment ||
                         process.env.NODE_ENV ||
                         "development",
-                    system_name: data?.system_name || "SYSTEM NAME",
+                    domain: data?.domain || "SYSTEM NAME",
                 });
 
                 console.log("upload successfully", newFile);
@@ -165,6 +168,11 @@ module.exports = {
                 const newFile = await File.create({
                     url: fileUrl,
                     type: data.type,
+                    environment:
+                        data?.environment ||
+                        process.env.NODE_ENV ||
+                        "development",
+                    domain: data?.domain || "SYSTEM NAME",
                 });
 
                 console.log("upload successfully", newFile);

@@ -116,18 +116,18 @@ module.exports = {
                     "gender",
                     "full_name",
                 ],
-                include: [
-                    {
-                        attributes: ["id", "role_name", "icon"],
-                        model: Role,
-                        required: false,
-                    },
-                    {
-                        attributes: ["id", "url", "type"],
-                        model: File,
-                        required: false,
-                    },
-                ],
+                // include: [
+                //     {
+                //         attributes: ["id", "role_name", "icon"],
+                //         model: Role,
+                //         required: false,
+                //     },
+                //     {
+                //         attributes: ["id", "url", "type"],
+                //         model: File,
+                //         required: false,
+                //     },
+                // ],
                 order: [["createdAt", "DESC"]],
             });
             res.status(200).json(users);

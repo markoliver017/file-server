@@ -32,30 +32,35 @@ app.use(passport.session());
 
 app.use(
     cors({
-        origin: "*", // Allow all origins (for development)
+        origin: ["https://pedbc.pcmc.gov.ph", "http://localhost:3000"], // Allow all origins (for development)
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
         allowedHeaders: "Content-Type, Authorization",
         exposedHeaders: "Cross-Origin-Resource-Policy",
     })
 );
 
-app.use("/uploads", (req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "https://pedbc.pcmc.gov.ph");
-    res.header("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
-    res.header(
-        "Access-Control-Allow-Headers",
-        "Origin, Content-Type, Accept, Authorization, Cache-Control"
-    );
-    res.header("Cache-Control", "public, max-age=31536000, immutable");
+// app.use("/uploads", (req, res, next) => {
+//     res.header("Access-Control-Allow-Origin", "https://pedbc.pcmc.gov.ph");
+//     res.header("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
+//     res.header(
+//         "Access-Control-Allow-Headers",
+//         "Origin, Content-Type, Accept, Authorization, Cache-Control"
+//     );
+//     res.header("Cache-Control", "public, max-age=31536000, immutable");
 
-    if (req.method === "OPTIONS") {
-        return res.status(204).end();
-    }
-    next();
-});
+//     if (req.method === "OPTIONS") {
+//         return res.status(204).end();
+//     }
+//     next();
+// });
 
-app.use(helmet());
-app.use(morgan("combined"));
+// app.use(
+//     helmet({
+//         crossOriginEmbedderPolicy: false, // Disables COEP
+//         crossOriginResourcePolicy: { policy: "cross-origin" }, // Allows cross-origin resource requests
+//     })
+// );
+// app.use(morgan("combined"));
 app.use("/uploads", express.static("public/uploads"));
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 app.use(bodyParser.json());

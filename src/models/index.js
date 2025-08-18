@@ -92,7 +92,7 @@ const syncDatabase = async () => {
 };
 
 authDatabase();
-syncDatabase();
+// syncDatabase();
 
 process.on("SIGINT", async () => {
     try {

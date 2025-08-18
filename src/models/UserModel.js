@@ -176,16 +176,16 @@ module.exports = (sequelize, DataTypes) => {
     };
 
     // Define associations in the `associate` method
-    User.associate = (models) => {
-        User.belongsTo(models.Role, {
-            foreignKey: "role_id",
-            onDelete: "RESTRICT",
-        });
-        User.belongsTo(models.File, {
-            foreignKey: "photo_id",
-            onDelete: "SET NULL",
-        });
-    };
+    // User.associate = (models) => {
+    //     User.belongsTo(models.Role, {
+    //         foreignKey: "role_id",
+    //         onDelete: "RESTRICT",
+    //     });
+    //     User.belongsTo(models.File, {
+    //         foreignKey: "photo_id",
+    //         onDelete: "SET NULL",
+    //     });
+    // };
 
     return User;
 };

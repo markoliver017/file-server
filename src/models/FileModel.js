@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 defaultValue: "development",
             },
-            system_name: {
+            domain: {
                 type: DataTypes.STRING,
                 allowNull: true,
             },

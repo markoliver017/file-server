@@ -1,56 +1,23 @@
 const express = require("express");
 const router = express.Router();
-const userController = require("@controllers/UsersController");
 const uploadController = require("@controllers/UploadController");
-const roleController = require("@controllers/RolesController");
-const bloodTypeController = require("@controllers/BloodTypesController");
 const authJWTTokenMiddleware = require("@middlewares/authJWTTokenMiddleware");
 const auditLogger = require("@middlewares/auditLoggerMiddleware");
 const jwt = require("jsonwebtoken");
 const passport = require("@config/passport");
-const menusController = require("@controllers/MenusController");
-const subMenusController = require("@controllers/SubMenuController");
 
 /* middlewares */
 router.use(auditLogger);
 
 /* File Upload */
-router.post("/uploads", uploadController.uploadUserPhoto);
+router.get("/uploads", authJWTTokenMiddleware, uploadController.index);
+router.post(
+    "/uploads",
+    authJWTTokenMiddleware,
+    uploadController.uploadUserPhoto
+);
 router.put("/uploads/:id", uploadController.updateUserPhoto);
 router.post("/upload-pdf", uploadController.uploadPdfFile);
-
-/** Users routes **/
-router.get("/", userController.index);
-router.get("/users", authJWTTokenMiddleware, userController.getAllUsers);
-router.post("/users", userController.store);
-router.get("/users/:id", userController.getUserById);
-router.put("/users/:id", userController.updateUser);
-router.put("/users/:id/files", userController.updateUserPhoto);
-router.delete("/users/:id", userController.deleteUser);
-
-/** Roles routes**/
-router.get("/", roleController.index);
-router.get("/roles", roleController.getAllRoles);
-router.post("/roles", roleController.store);
-router.get("/roles/:id", roleController.getRoleById);
-router.put("/roles/:id", roleController.updateRole);
-router.delete("/roles/:id", roleController.deleteRole);
-
-/** Menus routes**/
-router.get("/menus", menusController.getAllMenus);
-router.post("/menus", menusController.store);
-router.get("/menus/:id", menusController.getMenuById);
-router.put("/menus/:id", menusController.updateMenu);
-router.delete("/menus/:id", menusController.deleteMenu);
-
-/** SubMenu routes**/
-// router.get("/menus/:menu_id/sub_menu", menusController.getAllMenus);
-router.post("/menus/:menu_id/sub_menu", subMenusController.store);
-router.get("/sub_menu/:id", subMenusController.getSubMenuById);
-router.put("/sub_menu/:id", subMenusController.updateSubMenu);
-router.delete("/sub_menu/:id", subMenusController.deleteMenu);
-
-router.get("/bloodtypes", bloodTypeController.index);
 
 router.post("/login", (req, res, next) => {
     passport.authenticate("local", (err, user, info) => {

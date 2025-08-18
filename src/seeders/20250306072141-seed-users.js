@@ -1,3 +1,4 @@
+// npx sequelize-cli seed:generate --name 20250306072141-seed-users.js
 "use strict";
 
 const { faker } = require("@faker-js/faker");
