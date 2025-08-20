@@ -60,7 +60,8 @@ app.use(
 //         crossOriginResourcePolicy: { policy: "cross-origin" }, // Allows cross-origin resource requests
 //     })
 // );
-// app.use(morgan("combined"));
+app.use(helmet());
+app.use(morgan("dev"));
 app.use("/uploads", express.static("public/uploads"));
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 app.use(bodyParser.json());
@@ -72,6 +73,9 @@ app.use((req, res, next) => {
     next();
 });
 
+app.get("/", (req, res) => {
+    res.send("Welcome to the PCMC FILESERVER API");
+});
 app.use("/api", routes);
 
 app.use((err, req, res, next) => {
