@@ -16,8 +16,12 @@ router.post(
     authJWTTokenMiddleware,
     uploadController.uploadUserPhoto
 );
+router.post(
+    "/upload-pdf",
+    authJWTTokenMiddleware,
+    uploadController.uploadPdfFile
+);
 router.put("/uploads/:id", uploadController.updateUserPhoto);
-router.post("/upload-pdf", uploadController.uploadPdfFile);
 
 router.post("/login", (req, res, next) => {
     passport.authenticate("local", (err, user, info) => {
@@ -59,10 +63,31 @@ router.get("/validate_login", (req, res) => {
 });
 
 /* AUTHENTICATION TOKEN */
-router.post("/user/generate-token", (req, res) => {
-    const user = { id: 1, email: "testuser@email.com" }; // Example user payload
-    const token = jwt.sign(user, process.env.JWT_SECRET);
-    res.json({ token });
+router.post("/user/generate-token", (req, res, next) => {
+    passport.authenticate("local", (err, user, info) => {
+        if (err) {
+            return res.status(500).json({
+                error: true,
+                message: "Internal Server Error",
+                err,
+            });
+        }
+        if (!user) {
+            return res.status(401).json({
+                error: true,
+                message: "Invalid username or password",
+            });
+        }
+
+        // Generate JWT token after successful authentication
+        const payload = { id: user.id, email: user.email };
+        const token = jwt.sign(payload, process.env.JWT_SECRET);
+        res.json({
+            error: false,
+            message: "Authentication successful",
+            token,
+        });
+    })(req, res, next);
 });
 
 router.get("/user/validateToken", (req, res) => {
@@ -83,6 +108,10 @@ router.get("/user/validateToken", (req, res) => {
         // Access Denied
         return res.status(401).send(error);
     }
+});
+
+router.get("/login", (req, res) => {
+    res.sendFile("login.html", { root: "public" });
 });
 
 module.exports = router;

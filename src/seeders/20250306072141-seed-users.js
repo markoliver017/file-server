@@ -1,4 +1,4 @@
-// npx sequelize-cli seed:generate --name 20250306072141-seed-users.js
+// npx sequelize-cli db:seed --seed 20250306072141-seed-users.js
 "use strict";
 
 const { faker } = require("@faker-js/faker");
@@ -11,13 +11,7 @@ module.exports = {
             "Users",
             [
                 {
-                    role_id: 3,
-                    first_name: faker.person.firstName(),
-                    last_name: faker.person.lastName(),
-                    middle_name: faker.person.middleName(),
-                    photo_id: null,
-                    gender: faker.helpers.arrayElement(["male", "female"]),
-                    is_active: faker.helpers.arrayElement([0, 1]),
+                    username: faker.internet.username(),
                     email: faker.internet.email(),
                     password: bcrypt.hashSync("password1234", 10),
                     createdAt: new Date(),

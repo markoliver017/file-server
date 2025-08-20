@@ -32,7 +32,8 @@ app.use(passport.session());
 
 app.use(
     cors({
-        origin: ["https://pedbc.pcmc.gov.ph", "http://localhost:3000"], // Allow all origins (for development)
+        // origin: "*", // Allow all origins (for development)
+        origin: ["https://pedbc.pcmc.gov.ph", "http://localhost:3000"],
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
         allowedHeaders: "Content-Type, Authorization",
         exposedHeaders: "Cross-Origin-Resource-Policy",

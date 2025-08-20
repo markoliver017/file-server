@@ -1,7 +1,7 @@
 // filepath: c:\Users\mcroman\Desktop\clone\NodeExpressMVC\src\config\passport.js
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
-const { User, BloodType, Role } = require("@models/index");
+const { User } = require("@models/index");
 
 passport.use(
     new LocalStrategy(
@@ -13,30 +13,7 @@ passport.use(
             try {
                 const user = await User.findOne({
                     where: { email },
-                    attributes: [
-                        "id",
-                        "email",
-                        "password",
-                        "first_name",
-                        "last_name",
-                        "middle_name",
-                        "photo_id",
-                        "full_name",
-                        // "role_id",
-                        // "blood_type_id",
-                    ],
-                    include: [
-                        // {
-                        //   attributes: ["id", "blood_type"],
-                        //   model: BloodType,
-                        //   required: false,
-                        // },
-                        {
-                            attributes: ["id", "role_name"],
-                            model: Role,
-                            required: false,
-                        },
-                    ],
+                    attributes: ["id", "email", "password", "username"],
                 });
                 if (!user) {
                     return done(null, false, {

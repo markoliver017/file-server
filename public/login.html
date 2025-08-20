@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Login</title>
+        <style>
+            .login-container {
+                max-width: 400px;
+                margin: 50px auto;
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+            .form-group {
+                margin-bottom: 15px;
+            }
+            input {
+                width: 100%;
+                padding: 8px;
+                margin-top: 5px;
+            }
+            button {
+                width: 100%;
+                padding: 10px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            .error-message {
+                color: red;
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="login-container">
+            <h2>Login</h2>
+            <div class="error-message" id="errorMessage"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required />
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        required
+                    />
+                </div>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+
+        <script>
+            document
+                .getElementById("loginForm")
+                .addEventListener("submit", async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById("email").value;
+                    const password = document.getElementById("password").value;
+                    const errorMessage =
+                        document.getElementById("errorMessage");
+
+                    try {
+                        const response = await fetch(
+                            "/api/user/generate-token",
+                            {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({ email, password }),
+                            }
+                        );
+
+                        const data = await response.json();
+
+                        if (data.error) {
+                            errorMessage.style.display = "block";
+                            errorMessage.textContent = data.message;
+                        } else {
+                            // Store token in localStorage
+                            localStorage.setItem("token", data.token);
+                            errorMessage.style.display = "none";
+                            alert("Login successful!");
+                            // Redirect or handle successful login
+                        }
+                    } catch (error) {
+                        errorMessage.style.display = "block";
+                        errorMessage.textContent =
+                            "An error occurred. Please try again.";
+                    }
+                });
+        </script>
+    </body>
+</html>

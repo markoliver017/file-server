@@ -10,115 +10,10 @@ module.exports = (sequelize, DataTypes) => {
                 autoIncrement: true,
                 primaryKey: true,
             },
-            role_id: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                validate: {
-                    async isValidRole(value) {
-                        const Role = sequelize.models.Role; // Get Role model from sequelize
-                        if (!Role) {
-                            throw new Error("Role model is not available.");
-                        }
-                        const role = await Role.findByPk(value);
-                        if (!role) {
-                            throw new Error("Role field is required.");
-                        }
-                    },
-                },
-            },
-            photo_id: {
-                type: DataTypes.INTEGER,
-                allowNull: true,
-                validate: {
-                    async isValidFile(value) {
-                        const File = sequelize.models.File; // Get Role model from sequelize
-                        if (!File) {
-                            throw new Error("File model is not available.");
-                        }
-                        if (value) {
-                            const file = await File.findByPk(value);
-                            if (!file) {
-                                throw new Error("Invalid file ID.");
-                            }
-                        }
-                    },
-                },
-            },
-            first_name: {
-                type: DataTypes.STRING(50),
-                allowNull: false,
-                set(value) {
-                    const formatted = value
-                        .toLowerCase()
-                        .split(" ")
-                        .map(
-                            (word) =>
-                                word.charAt(0).toUpperCase() + word.slice(1)
-                        )
-                        .join(" ");
 
-                    this.setDataValue("first_name", formatted);
-                },
-                validate: {
-                    notEmpty: {
-                        msg: "First Name field is required.",
-                    },
-                    is: {
-                        args: /^[A-Za-z\s]+$/, // Allows only letters and spaces
-                        msg: "First Name can only contain letters and spaces.",
-                    },
-                },
-            },
-            last_name: {
+            username: {
                 type: DataTypes.STRING(50),
                 allowNull: false,
-                set(value) {
-                    const formatted = value
-                        .toLowerCase()
-                        .split(" ")
-                        .map(
-                            (word) =>
-                                word.charAt(0).toUpperCase() + word.slice(1)
-                        )
-                        .join(" ");
-
-                    this.setDataValue("last_name", formatted);
-                },
-                validate: {
-                    notEmpty: {
-                        msg: "Last Name field is required.",
-                    },
-                    is: {
-                        args: /^[A-Za-z\s]+$/, // Allows only letters and spaces
-                        msg: "Last Name can only contain letters and spaces.",
-                    },
-                },
-            },
-            middle_name: {
-                type: DataTypes.STRING(50),
-                allowNull: true,
-                validate: {
-                    isValid(value) {
-                        if (value && !/^[A-Za-z\s]+$/.test(value)) {
-                            throw new Error(
-                                "Middle Name can only contain letters and spaces."
-                            );
-                        }
-                    },
-                },
-            },
-            prefix: { type: DataTypes.STRING(50), allowNull: true },
-            suffix: { type: DataTypes.STRING(50), allowNull: true },
-            gender: {
-                type: DataTypes.ENUM("male", "female"),
-                allowNull: false,
-                defaultValue: "male",
-                validate: {
-                    isIn: {
-                        args: [["male", "female"]],
-                        msg: "Invalid gender type.",
-                    },
-                },
             },
             is_active: {
                 type: DataTypes.TINYINT,
@@ -148,21 +43,24 @@ module.exports = (sequelize, DataTypes) => {
                     },
                 },
                 set(value) {
-                    if (value.length >= 8) {
-                        const hashedPassword = bcrypt.hashSync(
-                            value,
-                            saltRounds
-                        );
-                        this.setDataValue("password", hashedPassword);
+                    if (value && value.length >= 8) {
+                        // Check if already a bcrypt hash
+                        const bcryptRegex = /^\$2[aby]\$.{56}$/;
+
+                        if (bcryptRegex.test(value)) {
+                            // Already hashed, just set it
+                            this.setDataValue("password", value);
+                        } else {
+                            // Not hashed, hash it
+                            const hashedPassword = bcrypt.hashSync(
+                                value,
+                                saltRounds
+                            );
+                            this.setDataValue("password", hashedPassword);
+                        }
                     } else {
                         this.setDataValue("password", value);
                     }
-                },
-            },
-            full_name: {
-                type: DataTypes.VIRTUAL,
-                get() {
-                    return `${this.first_name} ${this.last_name}`;
                 },
             },
         },
