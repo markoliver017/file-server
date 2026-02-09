@@ -9,19 +9,8 @@ const passport = require("@config/passport");
 /* middlewares */
 router.use(auditLogger);
 
-/* File Upload */
-router.get("/uploads", authJWTTokenMiddleware, uploadController.index);
-router.post(
-    "/uploads",
-    authJWTTokenMiddleware,
-    uploadController.uploadUserPhoto
-);
-router.post(
-    "/upload-pdf",
-    authJWTTokenMiddleware,
-    uploadController.uploadPdfFile
-);
-router.put("/uploads/:id", uploadController.updateUserPhoto);
+/* File Upload Routes - DEPRECATED/REMOVED */
+/* Use /api/upload/image or /api/upload/pdf via system/routes/api.js */
 
 router.post("/login", (req, res, next) => {
     passport.authenticate("local", (err, user, info) => {

@@ -25,7 +25,7 @@ app.use(
             maxAge: 15 * 60 * 1000, // 15 minutes
             rolling: true, // refresh the cookie on each request
         },
-    })
+    }),
 );
 app.use(passport.initialize());
 app.use(passport.session());
@@ -37,38 +37,17 @@ app.use(
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
         allowedHeaders: "Content-Type, Authorization",
         exposedHeaders: "Cross-Origin-Resource-Policy",
-    })
+    }),
 );
 
-// app.use("/uploads", (req, res, next) => {
-//     res.header("Access-Control-Allow-Origin", "https://pedbc.pcmc.gov.ph");
-//     res.header("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
-//     res.header(
-//         "Access-Control-Allow-Headers",
-//         "Origin, Content-Type, Accept, Authorization, Cache-Control"
-//     );
-//     res.header("Cache-Control", "public, max-age=31536000, immutable");
-
-//     if (req.method === "OPTIONS") {
-//         return res.status(204).end();
-//     }
-//     next();
-// });
-
-// app.use(
-//     helmet({
-//         crossOriginEmbedderPolicy: false, // Disables COEP
-//         crossOriginResourcePolicy: { policy: "cross-origin" }, // Allows cross-origin resource requests
-//     })
-// );
-// app.use(helmet());
 app.use(
     helmet({
         crossOriginResourcePolicy: { policy: "cross-origin" }, // Allows cross-origin resource requests
-    })
+    }),
 );
 app.use(morgan("dev"));
 app.use("/uploads", express.static("public/uploads"));
+app.use(express.static("public")); // Serve other static files (login.html, dashboard.html, etc.)
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -82,28 +61,26 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
     res.send("Welcome to the PCMC FILESERVER API");
 });
-app.use("/api", routes);
+// Mount new API routes (protected by Admin or API Key)
+const apiRoutes = require("@routes/api");
+app.use("/api", apiRoutes);
+
+// Keep old routes for now (Login, etc.)
+app.use("/api", routes); // Ensure this doesn't conflict. Old routes usage: /api/login, /api/uploads
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send("Something broke!");
 });
 
-// Start Server
-app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://0.0.0.0:${PORT}`);
+// Database Init
+const { authDatabase, syncDatabase } = require("@models");
+
+authDatabase().then(() => {
+    syncDatabase(); // This will only sync if in development
+
+    // Start Server
+    app.listen(PORT, "0.0.0.0", () => {
+        console.log(`Server running on http://0.0.0.0:${PORT}`);
+    });
 });
-
-//front end
-// import axios from "axios";
-
-// try {
-//     const res = await axios.post('http://localhost:5000/api/users/store', {
-//       username,
-//       password,
-//     });
-//     setResponse(res.data);
-//   } catch (error) {
-//     console.error(error.response.data);
-//     setResponse(error.response.data);
-//   }

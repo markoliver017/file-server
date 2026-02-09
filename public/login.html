@@ -1,54 +1,90 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Login</title>
+        <title>Admin Login</title>
         <style>
+            body {
+                font-family: sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                background: #f0f2f5;
+                margin: 0;
+            }
             .login-container {
-                max-width: 400px;
-                margin: 50px auto;
-                padding: 20px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
+                background: white;
+                padding: 40px;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                width: 100%;
+                max-width: 350px;
+            }
+            h2 {
+                text-align: center;
+                color: #333;
+                margin-bottom: 24px;
             }
             .form-group {
-                margin-bottom: 15px;
+                margin-bottom: 20px;
+            }
+            label {
+                display: block;
+                margin-bottom: 8px;
+                color: #666;
             }
             input {
                 width: 100%;
-                padding: 8px;
-                margin-top: 5px;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                box-sizing: border-box;
             }
             button {
                 width: 100%;
-                padding: 10px;
+                padding: 12px;
                 background-color: #007bff;
                 color: white;
                 border: none;
-                border-radius: 5px;
+                border-radius: 4px;
                 cursor: pointer;
+                font-size: 16px;
+                transition: background 0.3s;
+            }
+            button:hover {
+                background-color: #0056b3;
             }
             .error-message {
-                color: red;
+                color: #dc3545;
+                text-align: center;
+                margin-bottom: 20px;
                 display: none;
             }
         </style>
     </head>
     <body>
         <div class="login-container">
-            <h2>Login</h2>
+            <h2>Asset Admin</h2>
             <div class="error-message" id="errorMessage"></div>
             <form id="loginForm">
                 <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required />
+                    <label for="username">Username</label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        value="Derek36@hotmail.com"
+                        required
+                    />
                 </div>
                 <div class="form-group">
-                    <label for="password">Password:</label>
+                    <label for="password">Password</label>
                     <input
                         type="password"
                         id="password"
+                        value="password1234"
                         name="password"
                         required
                     />
@@ -57,46 +93,6 @@
             </form>
         </div>
 
-        <script>
-            document
-                .getElementById("loginForm")
-                .addEventListener("submit", async (e) => {
-                    e.preventDefault();
-                    const email = document.getElementById("email").value;
-                    const password = document.getElementById("password").value;
-                    const errorMessage =
-                        document.getElementById("errorMessage");
-
-                    try {
-                        const response = await fetch(
-                            "/api/user/generate-token",
-                            {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({ email, password }),
-                            }
-                        );
-
-                        const data = await response.json();
-
-                        if (data.error) {
-                            errorMessage.style.display = "block";
-                            errorMessage.textContent = data.message;
-                        } else {
-                            // Store token in localStorage
-                            localStorage.setItem("token", data.token);
-                            errorMessage.style.display = "none";
-                            alert("Login successful!");
-                            // Redirect or handle successful login
-                        }
-                    } catch (error) {
-                        errorMessage.style.display = "block";
-                        errorMessage.textContent =
-                            "An error occurred. Please try again.";
-                    }
-                });
-        </script>
+        <script src="/js/login.js"></script>
     </body>
 </html>

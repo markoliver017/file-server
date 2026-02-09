@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
             url: { type: DataTypes.TEXT, allowNull: false },
             // table_name: { type: DataTypes.STRING(255), allowNull: false },
             type: {
-                type: DataTypes.ENUM("online", "file_upload"),
+                type: DataTypes.STRING,
                 allowNull: false,
                 defaultValue: "file_upload",
             },
@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true,
             },
         },
-        { timestamps: true, tableName: "files" }
+        { timestamps: true, tableName: "files" },
     );
 
     // File.associate = (models) => {

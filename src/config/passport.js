@@ -3,16 +3,20 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const { User } = require("@models/index");
 
+const { Op } = require("sequelize");
+
 passport.use(
     new LocalStrategy(
         {
-            usernameField: "email",
+            usernameField: "username", // Front-end sends 'username'
             passwordField: "password",
         },
-        async (email, password, done) => {
+        async (login, password, done) => {
             try {
                 const user = await User.findOne({
-                    where: { email },
+                    where: {
+                        [Op.or]: [{ email: login }, { username: login }],
+                    },
                     attributes: ["id", "email", "password", "username"],
                 });
                 if (!user) {
@@ -32,8 +36,8 @@ passport.use(
             } catch (err) {
                 return done(err);
             }
-        }
-    )
+        },
+    ),
 );
 
 passport.serializeUser((user, done) => {
