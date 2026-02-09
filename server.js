@@ -61,6 +61,7 @@ app.use(
 //         crossOriginResourcePolicy: { policy: "cross-origin" }, // Allows cross-origin resource requests
 //     })
 // );
+// app.use(helmet());
 app.use(
     helmet({
         crossOriginResourcePolicy: { policy: "cross-origin" }, // Allows cross-origin resource requests
