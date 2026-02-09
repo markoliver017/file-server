@@ -1,0 +1,12 @@
+{
+    "apps": [
+        {
+            "name": "FILE-UPLOADS-API",
+            "script": "./server.js",
+            "env": {
+                "PORT": "3000"
+            }
+        }
+    ]
+}
+
