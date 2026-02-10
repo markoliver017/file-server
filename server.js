@@ -35,14 +35,23 @@ app.use(
         origin: "*", // Allow all origins (for development)
         //origin: ["https://pedbc.pcmc.gov.ph", "http://localhost:3000"],
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-        allowedHeaders: "Content-Type, Authorization",
+        allowedHeaders: "Content-Type, Authorization, x-api-key",
         exposedHeaders: "Cross-Origin-Resource-Policy",
     }),
 );
 
 app.use(
     helmet({
-        crossOriginResourcePolicy: { policy: "cross-origin" }, // Allows cross-origin resource requests
+        crossOriginResourcePolicy: { policy: "cross-origin" },
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: ["'self'", "https://static.cloudflareinsights.com"],
+                imgSrc: ["'self'", "data:", "blob:"], // Allow images from local uploads and blobs
+                connectSrc: ["'self'", "https://static.cloudflareinsights.com"],
+                styleSrc: ["'self'", "'unsafe-inline'"], // Allow inline styles if any
+            },
+        },
     }),
 );
 app.use(morgan("dev"));
