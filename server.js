@@ -32,10 +32,15 @@ app.use(passport.session());
 
 app.use(
     cors({
-        origin: "*", // Allow all origins (for development)
-        //origin: ["https://pedbc.pcmc.gov.ph", "http://localhost:3000"],
-        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-        allowedHeaders: "Content-Type, Authorization, x-api-key",
+        origin: function (origin, callback) {
+            // Allow all origins dynamically. 
+            // In a strict production environment, you might want to check the 'origin' 
+            // against an array of allowed domains instead of unconditionally returning true.
+            callback(null, true);
+        },
+        credentials: true, // Required for cookies, authorization headers with HTTPS
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+        allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept, Authorization, x-api-key",
         exposedHeaders: "Cross-Origin-Resource-Policy",
     }),
 );

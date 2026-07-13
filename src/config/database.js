@@ -4,7 +4,7 @@ dotenv.config();
 
 // const sequelize = new Sequelize("mydb", "root", "root", {
 const sequelize = new Sequelize(
-    process.env.DB_NAME || "blood_donation_db", //database
+    process.env.DB_NAME, //database
     process.env.DB_USER || "root", //username
     process.env.DB_PASSWORD || "root", //password
     {
