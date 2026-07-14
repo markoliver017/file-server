@@ -5,7 +5,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     const errorMessage = document.getElementById("errorMessage");
 
     try {
-        const response = await fetch("/api/login", {
+        const response = await fetch("/file-server/api/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password }),

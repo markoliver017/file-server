@@ -1,5 +1,5 @@
 // Config
-const API_BASE = "/api";
+const API_BASE = "/file-server/api";
 
 // Auth Check
 async function checkAuth() {

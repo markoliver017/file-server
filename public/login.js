@@ -5,7 +5,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     const errorMessage = document.getElementById("errorMessage");
 
     try {
-        const response = await fetch("/api/login", {
+        const response = await fetch("/file-server/api/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -22,7 +22,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
             errorMessage.style.display = "none";
             alert("Login successfully!");
             // Redirect or handle successful login
-            window.location.href = "/api/dashboard";
+            window.location.href = "/file-server/api/dashboard";
         }
     } catch (error) {
         errorMessage.style.display = "block";
