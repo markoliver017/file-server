@@ -100,11 +100,17 @@ router.get("/user/validateToken", (req, res) => {
 });
 
 router.get("/login", (req, res) => {
+    console.log("Login request");
     res.sendFile("login.html", { root: "public" });
 });
 
 router.get("/login.js", (req, res) => {
+    console.log("Login.js request");
     res.sendFile("login.js", { root: "public" });
+});
+
+router.get("/dashboard", (req, res) => {
+    res.sendFile("dashboard.html", { root: "public" });
 });
 
 module.exports = router;

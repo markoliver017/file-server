@@ -11,6 +11,9 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const routes = require("@config/routes");
 const favicon = require("serve-favicon");
+const { isAdmin } = require("./src/middlewares/authMiddleware");
+// Database Init
+const { authDatabase, syncDatabase } = require("@models");
 
 dotenv.config();
 const app = express();
@@ -33,14 +36,15 @@ app.use(passport.session());
 app.use(
     cors({
         origin: function (origin, callback) {
-            // Allow all origins dynamically. 
-            // In a strict production environment, you might want to check the 'origin' 
+            // Allow all origins dynamically.
+            // In a strict production environment, you might want to check the 'origin'
             // against an array of allowed domains instead of unconditionally returning true.
             callback(null, true);
         },
         credentials: true, // Required for cookies, authorization headers with HTTPS
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-        allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept, Authorization, x-api-key",
+        allowedHeaders:
+            "Origin, X-Requested-With, Content-Type, Accept, Authorization, x-api-key",
         exposedHeaders: "Cross-Origin-Resource-Policy",
     }),
 );
@@ -75,8 +79,13 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
     res.send("Welcome to the PCMC FILESERVER API");
 });
+app.get("/sync-db", isAdmin, async (req, res) => {
+    await syncDatabase();
+    res.send("Database synced successfully");
+});
 // Mount new API routes (protected by Admin or API Key)
 const apiRoutes = require("@routes/api");
+
 app.use("/api", apiRoutes);
 
 // Keep old routes for now (Login, etc.)
@@ -87,12 +96,7 @@ app.use((err, req, res, next) => {
     res.status(500).send("Something broke!");
 });
 
-// Database Init
-const { authDatabase, syncDatabase } = require("@models");
-
 authDatabase().then(() => {
-    syncDatabase(); // This will only sync if in development
-
     // Start Server
     app.listen(PORT, "0.0.0.0", () => {
         console.log(`Server running on http://0.0.0.0:${PORT}`);

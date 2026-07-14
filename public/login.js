@@ -1,16 +1,16 @@
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const email = document.getElementById("email").value;
+    const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
     const errorMessage = document.getElementById("errorMessage");
 
     try {
-        const response = await fetch("/api/user/generate-token", {
+        const response = await fetch("/api/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ username, password }),
         });
 
         const data = await response.json();
@@ -19,11 +19,10 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
             errorMessage.style.display = "block";
             errorMessage.textContent = data.message;
         } else {
-            // Store token in localStorage
-            localStorage.setItem("token", data.token);
             errorMessage.style.display = "none";
-            alert("Login successful!");
+            alert("Login successfully!");
             // Redirect or handle successful login
+            window.location.href = "/api/dashboard";
         }
     } catch (error) {
         errorMessage.style.display = "block";
