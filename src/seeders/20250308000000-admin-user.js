@@ -1,3 +1,4 @@
+//npx sequelize-cli db:seed --seed 20250308000000-admin-user.js
 "use strict";
 const bcrypt = require("bcrypt");
 
