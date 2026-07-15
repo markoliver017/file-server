@@ -29,18 +29,18 @@ const authDatabase = async () => {
 };
 const syncDatabase = async () => {
     // Only run sync in development to avoid data loss in production
-    if (process.env.NODE_ENV === "development") {
-        try {
-            await sequelize.sync({ alter: true }); // Sync models
-            console.log("✅ Tables synchronized successfully.");
-        } catch (error) {
-            console.error("❌ Database sync failed:", error);
-        }
-    } else {
-        console.log(
-            "ℹ️ Production environment: Skipping automatic table sync. Use migrations instead.",
-        );
+    // if (process.env.NODE_ENV === "development") {
+    try {
+        await sequelize.sync({ alter: true }); // Sync models
+        console.log("✅ Tables synchronized successfully.");
+    } catch (error) {
+        console.error("❌ Database sync failed:", error);
     }
+    // } else {
+    //     console.log(
+    //         "ℹ️ Production environment: Skipping automatic table sync. Use migrations instead.",
+    //     );
+    // }
 };
 
 // authDatabase();
