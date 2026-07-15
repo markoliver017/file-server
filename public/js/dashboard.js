@@ -7,7 +7,7 @@ async function checkAuth() {
         const res = await fetch(`${API_BASE}/validate_login`);
         if (!res.ok) throw new Error("Not logged in");
     } catch (e) {
-        window.location.href = "/login.html";
+        window.location.href = "/file-server/login.html";
     }
 }
 checkAuth();
