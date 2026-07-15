@@ -79,7 +79,7 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
     res.send("Welcome to the PCMC FILESERVER API");
 });
-app.get("/sync-db", isAdmin, async (req, res) => {
+app.get("/sync-db", async (req, res) => {
     await syncDatabase();
     res.send("Database synced successfully");
 });
